@@ -17,8 +17,13 @@ def create_app(config_name=None):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
 
-    register_blueprint(app)       # 注册蓝本
-    register_extentions(app)      # 注册ententions工具
+    register_blueprint(app)             # 注册蓝本
+    register_extentions(app)            # 注册extentions工具
+    register_loggin(app)                # 注册日志
+    register_shell_context(app)         # 注册上下文
+    register_template_context(app)      # 注册模板上下文
+    register_errors(app)                # 注册错误处理器
+    register_commans(app)               # 注册命令行处理器
 
     return app
 
@@ -43,9 +48,6 @@ def register_extentions(app):
     moment.init_app(app)
     migrate.init_app(app, db=db)
 
-# 注册日志
-def register_loggin(app):
-    pass
 
 # 每次在flask shell手动操作数据库, 要push上下文, 所以这里初始化上下文,省去一部分工作
 def register_shell_context(app):
@@ -63,9 +65,9 @@ def register_errors(app):
     def bad_request(e):
         return render_template('errors/400.html'), 400
 
-    @app.errorhandler(402)
+    @app.errorhandler(404)
     def bad_request(e):
-        return render_template('errors/402.html'), 402
+        return render_template('errors/404.html'), 404
 
     @app.errorhandler(500)
     def bad_request(e):
