@@ -65,9 +65,17 @@ def register_errors(app):
     def bad_request(e):
         return render_template('errors/400.html'), 400
 
+    @app.errorhandler(403)
+    def bad_request(e):
+        return render_template('errors/403.html'), 403
+
     @app.errorhandler(404)
     def bad_request(e):
         return render_template('errors/404.html'), 404
+
+    @app.errorhandler(413)
+    def bad_request(e):
+        return render_template('errors/413.html'), 413
 
     @app.errorhandler(500)
     def bad_request(e):
