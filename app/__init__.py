@@ -116,6 +116,12 @@ def register_commans(app):
         fake_user(user)
         click.echo('生成虚拟数据结束')
 
+    @app.cli.command()
+    def pic():
+        from app.fakes import fake_pic
+        fake_pic()
+        click.echo('10张图片生成完成')
+
 
 
 

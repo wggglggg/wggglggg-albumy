@@ -2,6 +2,8 @@
 from app.extentions import fake, db
 from app.models import User
 from sqlalchemy.exc import IntegrityError
+from PIL import Image
+import random, os
 
 # admin管理员生成函数
 def fake_admin():
@@ -36,8 +38,14 @@ def fake_user(count=10):
         except IntegrityError:
             db.session.rollback()
 
+def fake_pic():
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    i = 1
+    for i in range(11):
 
-
+        r = lambda: random.randint(128, 255)  #  随机取128 到 255之间任意数字
+        img = Image.new(mode='RGB', size=(800,800), color=(r(), r(), r()))
+        img.save(basedir + '\static\images\%d.jpg' % i)
 
 
 
