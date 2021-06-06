@@ -16,6 +16,7 @@ flask-ckeditor = "*"
 flask-mail = "*"
 flask-moment = "*"
 flask-migrate = "*"
+faker = "*"
 
 [dev-packages]
 

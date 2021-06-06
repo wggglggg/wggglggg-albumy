@@ -1,11 +1,12 @@
+
 from flask import Flask, render_template
 from app.bluepoints.main import main_bp
 from app.bluepoints.admin import admin_bp
 from app.bluepoints.user import user_bp
 from app.bluepoints.auth import auth_bp
-from app.extentions import bootstrap, db, login_manager, mail, moment, ckeditor, migrate
+from app.extentions import bootstrap, db, login_manager, mail, moment, ckeditor,  migrate
 from config import config
-import os
+import os, click
 
 #app创建工厂, 所有要与app相挂钩的第三方都汇集到这里
 def create_app(config_name=None):
@@ -84,7 +85,36 @@ def register_errors(app):
 
 # flask 命令行处理器
 def register_commans(app):
-    pass
+    # 如果有老的表就先删除再创建新表, 如果没有老的表, 直接创建新表
+    @app.cli.command()
+    @click.option('--drop', is_flag=True, help='Create after drop')
+    def initdb(drop):
+        if drop:
+            click.confirm('这个操作会删除表, 是否要继续', abort=True)
+            db.drop_all()
+            click.echo('删除表完毕')
+        db.create_all()
+        click.echo("表创建成功")
+
+    # 创建表
+    @app.cli.command()
+    def init():
+        db.create_all()
+        click.echo('表创建成功')
+
+    # 生成虚拟数据
+    @app.cli.command()                               # 也可以在命令行flask forge --user=50  来生成50条数据
+    @click.option('--user', default=10, help='生成虚拟用户, 默认10个')
+    def forge(user):                                 # user参数是生成的个数默认是10
+        from app.fakes import fake_admin, fake_user  # 调用管理员与用户生成函数
+        db.drop_all()
+        db.create_all()
+
+        click.echo('生成管理员')
+        fake_admin()
+        click.echo('生成 %d 用户数据' % user)
+        fake_user(user)
+        click.echo('生成虚拟数据结束')
 
 
 
