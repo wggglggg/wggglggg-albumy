@@ -16,22 +16,25 @@ def fake_admin():
     db.session.commit()
 
 def fake_user(count=10):
-    user = User(name=fake.name(),
-                confirmed=True,
-                username=fake.user_name(),
-                email=fake.email(),
-                bio=fake.sentence(),
-                location=fake.city(),
-                website=fake.url(),
-                member_since=fake.date_this_decade()  # 十年内的时期,
-                )
-    user.set_password('12345678')
-    db.session.add(user)
-    # 容错机制, 如果数据存储出错删除缓存rollback(), 不然后面再操作数据 库会出错
-    try:
-        db.session.commit()
-    except IntegrityError:
-        db.session.rollback()
+
+    for i in range(count):
+        user = User(name=fake.name(),
+                    confirmed=True,
+                    username=fake.user_name(),
+                    email=fake.email(),
+                    bio=fake.sentence(),
+                    location=fake.city(),
+                    website=fake.url(),
+                    member_since=fake.date_this_decade()  # 十年内的时期,
+                    )
+
+        user.set_password('12345678')
+        db.session.add(user)
+        # 容错机制, 如果数据存储出错删除缓存rollback(), 不然后面再操作数据 库会出错
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
 
 
 

@@ -17,7 +17,7 @@ db = SQLAlchemy()
 ckeditor = CKEditor()
 mail = Mail()
 moment = Moment()
-fake = Faker()
+fake = Faker('zh_CN')
 migrate = Migrate()
 
 
