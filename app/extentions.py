@@ -25,10 +25,12 @@ migrate = Migrate()
 @login_manager.user_loader
 def load_user(user_id):
     from app.models import User
-    user = User.query.get(user_id)  # id=user_id
+    user = User.query.get(int(user_id))  # id=user_id
     return user
 
+login_manager.login_view = 'auth.login'
 
+login_manager.login_message_category = 'warning'
 
 
 

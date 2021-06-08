@@ -17,6 +17,7 @@ flask-mail = "*"
 flask-moment = "*"
 flask-migrate = "*"
 faker = "*"
+pillow = "*"
 
 [dev-packages]
 

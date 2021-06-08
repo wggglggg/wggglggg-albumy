@@ -6,6 +6,7 @@ from app.bluepoints.user import user_bp
 from app.bluepoints.auth import auth_bp
 from app.extentions import bootstrap, db, login_manager, mail, moment, ckeditor,  migrate
 from config import config
+from app.models import User
 import os, click
 
 #app创建工厂, 所有要与app相挂钩的第三方都汇集到这里
@@ -43,7 +44,7 @@ def register_loggin(app):
 def register_extentions(app):
     bootstrap.init_app(app)
     db.init_app(app)
-    # login_manager.init_app(app)
+    login_manager.init_app(app)
     ckeditor.init_app(app)
     mail.init_app(app)
     moment.init_app(app)
@@ -54,7 +55,7 @@ def register_extentions(app):
 def register_shell_context(app):
     @app.shell_context_processor  # shell上下文
     def make_shell_context():
-        return dict(db=db)         # 与上下文相关的写到dict里
+        return dict(db=db, User=User)         # 与上下文相关的写到dict里
 
 # 模板上下文处理器, 模板初始化时预先拿到的数据放这里
 def register_template_context(app):
