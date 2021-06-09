@@ -29,7 +29,7 @@ def generate_token(user, operation, expires_in=None, **kwargs):    # opeation
     return s.dumps(data)                                            # 将字典揉进s序列数里面形成完成的 token
 
 # 将token反解校验
-def validate_token(user, operation, token):
+def validate_token(user, operation, token, new_password):
     s = Serializer(current_app.config['SECRET_KEY'])
 
     try:
@@ -43,6 +43,10 @@ def validate_token(user, operation, token):
 
     if operation == Operations.CONFIRM:                  # 如果是注册验证过了,  改confirmed改为True
         user.confirmed = True
+
+    elif operation == Operations.RESET_PASSWORD:
+        user.set_password(new_password)
+
     else:
         return False
 

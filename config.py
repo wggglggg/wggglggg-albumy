@@ -8,7 +8,7 @@ class Operations:
     CHANGE_EMAIL = 'change-email'
 
 class BaseConfig(object):
-    SECRET_KEY = os.getenv('SECRET_KEY', 'secret string')
+    SECRET_KEY = os.getenv('SECRET_KEY')
     MAX_CONTENT_LENGTH = 3 * 1024 * 1024  # file size exceed to 3 Mb will return a 413 error response.
 
 

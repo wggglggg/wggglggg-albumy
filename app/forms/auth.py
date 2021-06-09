@@ -12,7 +12,6 @@ class RegisterForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(),Length(1,20), Regexp('^[a-zA-z0-9]*$', message='名字必须是字母与数字')])
     password = PasswordField('Password', validators=[DataRequired(), Length(8,120),EqualTo('confirm_password')])
     confirm_password = PasswordField('Confirm password', validators=[DataRequired()])
-    remember = BooleanField('Remember me', default=False)
     submit = SubmitField('注册')
 
     # 为了注册时让username与email在数据库中是唯一性, 所以注册时前端页面就要验证数据是唯一的
@@ -34,5 +33,14 @@ class LoginForm(FlaskForm):
     remember = BooleanField('Remember me')
     submit = SubmitField('登录')
 
+# 忘记密码表单, 只提供一个字段email,和一个subit
+class ForgetPasswordForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Length(1,254), Email()])
+    submit = SubmitField('发送')
 
-
+# 重置密码
+class ResetPasswordForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Length(1,254), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(8, 120), EqualTo('confirm_password')])
+    confirm_password = PasswordField('Confirm password', validators=[DataRequired()])
+    submit = SubmitField('重置密码')
