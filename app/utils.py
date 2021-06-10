@@ -25,7 +25,8 @@ def redirect_back(default='main.index', **kwargs):
 def generate_token(user, operation, expires_in=None, **kwargs):    # opeation
     s = Serializer(current_app.config['SECRET_KEY'], expires_in)   # 将SECRET_KEY+有效时间  =  序列token一部分
     data = {'id': user.id, 'operation': operation}
-    data.update(**kwargs)                                          # 预留了参数位置
+    data.update(**kwargs)                                           # 预留了参数位置
+    print('s.dumps(data)-------------',s.dumps(data))
     return s.dumps(data)                                            # 将字典揉进s序列数里面形成完成的 token
 
 # 将token反解校验
