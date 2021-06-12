@@ -5,9 +5,9 @@ from app.bluepoints.main import main_bp
 from app.bluepoints.admin import admin_bp
 from app.bluepoints.user import user_bp
 from app.bluepoints.auth import auth_bp
-from app.extentions import bootstrap, db, login_manager, mail, moment, ckeditor,  migrate, dropzone
+from app.extentions import bootstrap, db, login_manager, mail, moment, ckeditor,  migrate, dropzone, csrf
 from config import config
-from app.models import User, Role, Permission
+from app.models import User, Role, Permission, Photo
 import os, click
 
 #app创建工厂, 所有要与app相挂钩的第三方都汇集到这里
@@ -51,13 +51,14 @@ def register_extentions(app):
     moment.init_app(app)
     migrate.init_app(app, db=db)
     dropzone.init_app(app)
+    csrf.init_app(app)
 
 
 # 每次在flask shell手动操作数据库, 要push上下文, 所以这里初始化上下文,省去一部分工作
 def register_shell_context(app):
     @app.shell_context_processor  # shell上下文
     def make_shell_context():
-        return dict(db=db, User=User, Role=Role, Permission=Permission)         # 与上下文相关的写到dict里
+        return dict(db=db, User=User, Role=Role, Permission=Permission, Photo=Photo)         # 与上下文相关的写到dict里
 
 # 模板上下文处理器, 模板初始化时预先拿到的数据放这里
 def register_template_context(app):

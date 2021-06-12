@@ -1,6 +1,10 @@
-from flask import Blueprint, render_template, url_for
-
-
+from flask import Blueprint, render_template, url_for, request, current_app
+from flask_login import login_required, current_user
+from app.decorators import permission_required, confirm_required
+from flask_dropzone import random_filename
+from app.models import Photo
+from app.extentions import db
+import os
 
 main_bp = Blueprint('main', __name__)
 
@@ -13,3 +17,26 @@ def index():
 @main_bp.route('/explore')
 def explore():
     return render_template('main/explore.html')
+
+@main_bp.route('/upload', methods=['GET','POST'])
+@login_required                                         # 验证是否登录
+@confirm_required                                       # 验证是否验证过邮箱链接
+@permission_required('UPLOAD')                          # 验证是否有权限UPLOAD上传图片
+def upload():
+# 先检验是否为POST提交, 再查看是否有file字符串在files信息里
+    if request.method == 'POST' and 'file' in request.files:
+        # 从url里提取文件数据
+        f = request.files.get('file')
+        # 随机的生成新名字给接收的文件
+        filename = random_filename(f.filename)
+        # 保存到指定的目录,另将随机的文件名拼到后面
+        f.save(os.path.join(current_app.config['ALBUMY_UPLOAD_PATH'], filename))
+
+        # 将照片记录写入数据库
+        photo = Photo(
+            filename=filename,
+            author=current_user._get_current_object()
+        )
+        db.session.add(photo)
+        db.session.commit()
+    return render_template('main/upload.html')

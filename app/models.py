@@ -3,6 +3,7 @@ from flask_login import UserMixin, current_user
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import current_app
+from datetime import datetime
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -21,6 +22,8 @@ class User(db.Model, UserMixin):
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     role = db.relationship('Role', back_populates='users')
 
+    # 与 photo表 关联, 设置级联为all, 当user被 删除, user.photos 也被删除
+    photos = db.relationship('Photo', back_populates='author', cascade='all')
 
     # User初始化, 注册一个用户, 马上给一个权限, 只区分 一般用户 与 大管理员
     def init(self, **kwargs):
@@ -62,7 +65,10 @@ roles_permissions = db.Table('roles_permissions',
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), unique=True)           # 角色名称
+
+    # 与permission 关联
     permissions = db.relationship('Permission', secondary=roles_permissions, back_populates='roles' )
+    # 与user 关联
     users = db.relationship('User', back_populates='role')
 
     # 各个角色对映的权限
@@ -114,10 +120,21 @@ class Role(db.Model):
 class Permission(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), unique=True)           # 权限名称
+
+    # 与 role 表关系
     roles = db.relationship('Role', secondary=roles_permissions, back_populates='permissions')
 
 
+# 上传照片表单
+class Photo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(500))                # 照片描述
+    filename = db.Column(db.String(64))                    # 照片名字
+    filename_s = db.Column(db.String(64))                  # small照片名字
+    filename_m = db.Column(db.String(64))                  # medium照片名字
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)  # 时间戳
 
-
-
+    # 与 user表 关联
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # 照片的作者ID
+    author = db.relationship('User', back_populates='photos')    # 照片的作者
 

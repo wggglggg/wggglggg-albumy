@@ -9,7 +9,6 @@ class Operations:
 
 class BaseConfig(object):
     # 网站角色权限管理
-    ALBUM_ADMIN_EMAIL = os.getenv('ALBUM_ADMIN_EMAIL','wggglggg@hotmail.com')
 
 
 
@@ -28,8 +27,27 @@ class BaseConfig(object):
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = ('Albumy Admin', MAIL_USERNAME)
     ALBUMY_MAIL_SUBJECT_PREFIX = '[Albumy]'
+    ALBUM_ADMIN_EMAIL = os.getenv('ALBUM_ADMIN_EMAIL','wggglggg@hotmail.com')
 
 
+    # dropzone 文件上传配置
+    DROPZONE_MAX_FILE_SIZE = 5                              # 单文件最大5m
+    MAX_CONTENT_LENGTH = 5 * 1024 * 1024                    # 5m
+    DROPZONE_MAX_FILES = 30                                 # 单次上传文件最多30个
+    DROPZONE_ALLOWED_FILE_TYPE = 'image'
+    # DROPZONE_ALLOWED_FILE_CUSTOM = True                   # 如果要自定义文件类型,这条要设置成True
+    # DROPZONE_ALLOWED_FILE_TYPE = 'image/*, .pdf, .txt'
+    DROPZONE_ENABLE_CSRF = True
+
+    ALBUMY_UPLOAD_PATH = os.path.join(basedir, 'uploads')   # 照片上传到保存的文件夹
+
+    ALBUMY_PHOTO_SIZE = {
+        'small': 400,
+        'medium': 800   }
+    ALBUMY_PHOTO_SUFFIX = {
+        ALBUMY_PHOTO_SIZE['small']: '_s',
+        ALBUMY_PHOTO_SIZE['medium']: '_m',
+    }
 
 # 开发环境配置, 继承于基本配置, 单独添加了数据库存放地址
 class DevelopmentConfig(BaseConfig):
