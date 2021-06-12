@@ -1,12 +1,13 @@
 
-from flask import Flask, render_template
+from flask import Flask, render_template, current_app
+
 from app.bluepoints.main import main_bp
 from app.bluepoints.admin import admin_bp
 from app.bluepoints.user import user_bp
 from app.bluepoints.auth import auth_bp
-from app.extentions import bootstrap, db, login_manager, mail, moment, ckeditor,  migrate
+from app.extentions import bootstrap, db, login_manager, mail, moment, ckeditor,  migrate, dropzone
 from config import config
-from app.models import User
+from app.models import User, Role, Permission
 import os, click
 
 #app创建工厂, 所有要与app相挂钩的第三方都汇集到这里
@@ -49,13 +50,14 @@ def register_extentions(app):
     mail.init_app(app)
     moment.init_app(app)
     migrate.init_app(app, db=db)
+    dropzone.init_app(app)
 
 
 # 每次在flask shell手动操作数据库, 要push上下文, 所以这里初始化上下文,省去一部分工作
 def register_shell_context(app):
     @app.shell_context_processor  # shell上下文
     def make_shell_context():
-        return dict(db=db, User=User)         # 与上下文相关的写到dict里
+        return dict(db=db, User=User, Role=Role, Permission=Permission)         # 与上下文相关的写到dict里
 
 # 模板上下文处理器, 模板初始化时预先拿到的数据放这里
 def register_template_context(app):
@@ -100,21 +102,27 @@ def register_commans(app):
     # 创建表
     @app.cli.command()
     def init():
-        db.create_all()
-        click.echo('表创建成功')
+        # click.echo('准备创建表')
+        # db.drop_all()
+        # db.create_all()
+        click.echo('初始化角色权限')
+        Role.init_role()
+        click.echo('结束')
+
 
     # 生成虚拟数据
     @app.cli.command()                               # 也可以在命令行flask forge --user=50  来生成50条数据
     @click.option('--user', default=10, help='生成虚拟用户, 默认10个')
     def forge(user):                                 # user参数是生成的个数默认是10
         from app.fakes import fake_admin, fake_user  # 调用管理员与用户生成函数
-        db.drop_all()
-        db.create_all()
-
+        # db.drop_all()
+        # db.create_all()
         click.echo('生成管理员')
         fake_admin()
         click.echo('生成 %d 用户数据' % user)
         fake_user(user)
+        click.echo('初始化权限和角色')
+        Role.init_role()
         click.echo('生成虚拟数据结束')
 
     @app.cli.command()
@@ -123,25 +131,15 @@ def register_commans(app):
         fake_pic()
         click.echo('10张图片生成完成')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    # 给已存在用户设立权限
+    @app.cli.command()
+    def initrolepermission():
+        for user in User.query.all():
+            if user.role is None:
+                if user.email == current_app.config['ALBUMY_ADMIN_EMAIL']:
+                    user.role = Role.query.filter_by(name='Administration').first()
+                else:
+                    user.role = Role.query.filter_by(name='User').first()
+            db.session.add(user)
+        db.session.commit()
+        click.echo('角色分配完毕')

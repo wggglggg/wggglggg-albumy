@@ -28,7 +28,7 @@ def send_confirm_email(user, token, to=None):
 
 # 发送改密码邮件
 def send_reset_password_email(user, token):
-    send_mail(subject='Password Reset', user=user, token=token, template='emails/reset_password',to=user.email)
+    send_mail(subject='Password Reset', user=user, token=token, template='emails/reset_password', to=user.email)
 
 
 

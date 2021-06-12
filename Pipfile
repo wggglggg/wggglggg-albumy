@@ -18,6 +18,7 @@ flask-moment = "*"
 flask-migrate = "*"
 faker = "*"
 pillow = "*"
+flask-dropzone = "*"
 
 [dev-packages]
 

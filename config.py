@@ -8,10 +8,16 @@ class Operations:
     CHANGE_EMAIL = 'change-email'
 
 class BaseConfig(object):
+    # 网站角色权限管理
+    ALBUM_ADMIN_EMAIL = os.getenv('ALBUM_ADMIN_EMAIL','wggglggg@hotmail.com')
+
+
+
     SECRET_KEY = os.getenv('SECRET_KEY')
-    MAX_CONTENT_LENGTH = 3 * 1024 * 1024  # file size exceed to 3 Mb will return a 413 error response.
 
 
+    # 网站角色权限管理
+    ALBUMY_ADMIN_EMAIL = os.getenv('ALBUMY_ADMIN_EMAIL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # 邮箱设置
@@ -22,6 +28,7 @@ class BaseConfig(object):
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = ('Albumy Admin', MAIL_USERNAME)
     ALBUMY_MAIL_SUBJECT_PREFIX = '[Albumy]'
+
 
 
 # 开发环境配置, 继承于基本配置, 单独添加了数据库存放地址

@@ -30,7 +30,7 @@ def generate_token(user, operation, expires_in=None, **kwargs):    # opeation
     return s.dumps(data)                                            # 将字典揉进s序列数里面形成完成的 token
 
 # 将token反解校验
-def validate_token(user, operation, token, new_password):
+def validate_token(user, operation, token, new_password=None):
     s = Serializer(current_app.config['SECRET_KEY'])
 
     try:
