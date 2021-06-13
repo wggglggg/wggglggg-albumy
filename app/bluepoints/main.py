@@ -4,6 +4,7 @@ from app.decorators import permission_required, confirm_required
 from flask_dropzone import random_filename
 from app.models import Photo
 from app.extentions import db
+from app.utils import resize_image
 import os
 
 main_bp = Blueprint('main', __name__)
@@ -27,14 +28,19 @@ def upload():
     if request.method == 'POST' and 'file' in request.files:
         # 从url里提取文件数据
         f = request.files.get('file')
-        # 随机的生成新名字给接收的文件
+        # 随机的生成新名字
         filename = random_filename(f.filename)
         # 保存到指定的目录,另将随机的文件名拼到后面
         f.save(os.path.join(current_app.config['ALBUMY_UPLOAD_PATH'], filename))
 
+        # 将裁剪的 中 小 图片文件名写入到数据库
+        filename_s = resize_image(f, filename, 400)
+        filename_m = resize_image(f,filename, 800)
         # 将照片记录写入数据库
         photo = Photo(
             filename=filename,
+            filename_s=filename_s,
+            filename_m=filename_m,
             author=current_user._get_current_object()
         )
         db.session.add(photo)

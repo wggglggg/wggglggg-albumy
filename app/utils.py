@@ -1,11 +1,10 @@
-import PIL
 from flask import request, redirect, url_for, current_app
 from urllib.parse import urlparse, urljoin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, SignatureExpired, BadSignature
 from config import Operations
 from app.extentions import db
-from PIL import image
-import os
+from PIL import Image
+import PIL, os
 
 # 校验拿到的target(实际就是next)是否安全,
 def is_safe_url(target):
@@ -58,17 +57,19 @@ def validate_token(user, operation, token, new_password=None):
     return True
 
 # 裁剪图片 ,给出宽度基准值, 自动识别图片宽度,将图片分成small小, medium中, 与大(原尺寸)
-def resize_image(image, filename, base_width):          # image原图片路径, filename图片文件名, base_width基准尺寸
-    filename, ext = os.path.split(filename)             # splite将原图片名分成  文件名与扩展名
-    img = image.open(image)                             # 读取(image为文件路径)
+def resize_image(image, filename, base_width):          # imaged原图片, filename图片文件名, base_width基准尺寸
+    filename, ext = os.path.splitext(filename)          # splitext将原图片名分成  文件名与扩展名
+    img = Image.open(image)                             # 读取(image为文件路径)
     if img.size[0] <= base_width:                       # size[0]应该是宽度值 , 比基准值小就成立
+        print('img.size[0]00000000', img.size[0])
+        print('img.size[1]11111111', img.size[1])
         return filename + ext                           # 原图比基准尺寸小, 就不裁剪,直接使用此图片做 中等尺寸
     w_percent = (base_width / img.size[0])              # 百分比 = 基准 / 图片宽度
     h_size = int((float(img.size[1]) * float(w_percent))) # 裁剪长度 = 图片长度 * 百分比
     img = img.resize((base_width, h_size), PIL.Image.ANTIALIAS)  # 最后合成图片
 
     # 名称.扩展名 = 名称 + _s/_m + .扩展名
-    filename = filename + current_app.config['ALBUMY_PHOTO_SUFFIX'][base_width] + ext
+    filename += current_app.config['ALBUMY_PHOTO_SUFFIX'][base_width] + ext
     # 将 中/小 尺寸图片保存到原目录, optimize是否压缩, quality压缩质量保证
     img.save(os.path.join(current_app.config['ALBUMY_UPLOAD_PATH'], filename), optimize=True, quality=85)
     return filename                                       # 加上 _s/_m 的新文件名, 将来用变量接收

@@ -53,7 +53,7 @@ class User(db.Model, UserMixin):
 
     def can(self, permission_name):
         permission = Permission.query.filter_by(name=permission_name).first()
-        return permission and self.role and permission in self.role.permissions
+        return permission is not None and self.role is not None and permission in self.role.permissions
 
 
 # 每个角色有多个权限 , 每个权限也有多个角色,所以要关联表

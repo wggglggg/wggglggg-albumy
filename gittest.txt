@@ -605,3 +605,274 @@ error: cannot spawn less: No such file or directory
 * 63ec8f1 Update README.md
 * 82f8433 Update README.md
 * 96c91f4 'first'
+
+____________________________手动编写 ignore忽略___________
+*.sh                # 忽略 .sh 结尾的文件
+.settings/          # 忽略 settings文件夹下的文件
+
+!*.txt              #  不忽略 .txt 结尾的文件(也就是要上传)
+
+/a/*.class          # 忽略 a 文件夹下class结尾的文件
+
+git add -A .        # 再提交到缓存
+git commit -m "xx"  # 再确认提交到本地仓库, 并标注xx
+git push
+--------------------------在线自动生成 ignore 文件---------
+www.gitignore.io  在线生成器
+
+-------------------------fork upstream 上游仓库-----------
+# wggglggg仓库里的是老信息, 想把上游仓库jeessy2到目前为止更新的内容拉下来, 可以先clone 下游wggglggg仓库里的老信息, 再git remote -v 查看有哪些分支, 如果 只有master, git remote add upstream https://github.com/jeessy2/ddns-go.git  添加一个上游仓库, 再git fetch upstream (分支名称, master可以不写) 来拉娶上游仓库的master
+
+C:\Users\wggglggg>git clone https://github.com/wggglggg/ddns-go.git
+Cloning into 'ddns-go'...
+remote: Enumerating objects: 616, done.
+remote: Total 616 (delta 0), reused 0 (delta 0), pack-reused 616
+Receiving objects: 100% (616/616), 1.12 MiB | 1.15 MiB/s, done.
+Resolving deltas: 100% (309/309), done.
+
+C:\Users\wggglggg>git remote -v
+fatal: not a git repository (or any of the parent directories): .git
+
+C:\Users\wggglggg>cd ddns-go
+
+C:\Users\wggglggg\ddns-go>git remote -v
+origin  https://github.com/wggglggg/ddns-go.git (fetch)
+origin  https://github.com/wggglggg/ddns-go.git (push)
+
+C:\Users\wggglggg\ddns-go>git remote add upstream https://github.com/jeessy2/ddns-go.git
+
+C:\Users\wggglggg\ddns-go>git remote -v
+origin  https://github.com/wggglggg/ddns-go.git (fetch)
+origin  https://github.com/wggglggg/ddns-go.git (push)
+upstream        https://github.com/jeessy2/ddns-go.git (fetch)
+upstream        https://github.com/jeessy2/ddns-go.git (push)
+
+C:\Users\wggglggg\ddns-go>git fetch upstream
+remote: Enumerating objects: 280, done.
+remote: Counting objects: 100% (221/221), done.
+remote: Compressing objects: 100% (122/122), done.
+remote: Total 280 (delta 135), reused 166 (delta 93), pack-reused 59
+Receiving objects: 100% (280/280), 433.33 KiB | 815.00 KiB/s, done.
+Resolving deltas: 100% (152/152), completed with 22 local objects.
+From https://github.com/jeessy2/ddns-go
+ * [new branch]      master     -> upstream/master
+ * [new tag]         v1.4.4     -> v1.4.4
+ * [new tag]         v2.0.0     -> v2.0.0
+ * [new tag]         v2.0.1     -> v2.0.1
+ * [new tag]         v2.0.2     -> v2.0.2
+ * [new tag]         v2.2.0     -> v2.2.0
+ * [new tag]         v2.2.1     -> v2.2.1
+ * [new tag]         v2.3.0     -> v2.3.0
+ * [new tag]         v2.3.1     -> v2.3.1
+ * [new tag]         v2.4.1     -> v2.4.1
+ * [new tag]         v2.4.2     -> v2.4.2
+ * [new tag]         v2.5.0     -> v2.5.0
+ * [new tag]         v2.7.0     -> v2.7.0
+ * [new tag]         v2.7.1     -> v2.7.1
+ * [new tag]         v2.8.1     -> v2.8.1
+ * [new tag]         v2.8.2     -> v2.8.2
+ * [new tag]         v2.8.3     -> v2.8.3
+ * [new tag]         v2.8.4     -> v2.8.4
+ * [new tag]         v2.8.5     -> v2.8.5
+
+C:\Users\wggglggg\ddns-go>pull = fetch + merge
+
+# 再将 下游仓库(老代码) 与 上游仓库(新代码)的代码合并, 因为没有对下游仓库的代码做修改直接使用rebase
+
+C:\Users\wggglggg\ddns-go>git rebase upstream/master             # 合并代码
+Successfully rebased and updated refs/heads/master.
+
+########### 如果做过wgglggg代码一些修改, 这时要用 git merge upstream/master来合并代码
+
+C:\Users\wggglggg\ddns-go>git branch                             # 查看当前 分支
+error: cannot spawn less: No such file or directory
+* master
+
+C:\Users\wggglggg\ddns-go>git dog
+error: cannot spawn less: No such file or directory
+* 505168e (HEAD -> master, upstream/master) 自动打开浏览器失败, 优化说明
+* e469dac (tag: v2.8.5) fix: 没有配置, 自动打开浏览器
+* 6d65bae (tag: v2.8.4) fix: 以服务方式运行, 显示配置文件地址
+* 60276a1 docs: add some tags
+* fefa187 (tag: v2.8.3) fix: add http timeout
+* dd51b86 docs: docker usage
+* 2190a9c (tag: v2.8.2) fix: webhook failed logic
+* c8c6e11 (tag: v2.8.1) fix: webhooks ipv6 addr
+* 8ee3a17 docs: bark usage
+* bc56364 feat: install ddns-go as a service (#47)
+* 3575b8f (tag: v2.7.1) fix: uninstall help
+* 78f2868 fix: logs on win don't display
+* 99b7f94 fix: run as a serivce
+* 6dff1f9 (tag: v2.7.0) feat: run as a service (#46)
+* 6cece5e docs: 优化说明
+* 6b4a998 refact: rename file name (#44)
+* 3eb4336 refact: alidns (#43)
+* b825dc6 docs: 直接使用
+* c05c71d (tag: v2.5.0) feat: using golang1.16 embed (#40)
+* 6e46be2 fixed ipv6 Array results (#35)
+* 439c617 (tag: v2.4.2) feat: 默认不勾选“禁止公网访问”
+* ed81d04 (tag: v2.4.1) fix: 禁止公网访问, 不校验Host
+* 7eec7c6 NotAllowWanAccess (#38)
+* abfec7c docs: use IPv4/IPv6
+* d79e3ab (tag: v2.3.1) update abbr
+* f4bb232 (tag: v2.3.0) docs: support docker cmd params
+* a476355 feat: support docker cmd params
+* e55a043 docs: docker usage
+* e99d9e2 (tag: v2.2.1) fix: 优化登陆提示
+* 8e29835 (tag: v2.2.0) feat: 登陆失败提示
+* d3a832f fix: docker和可执行文件的html保持相同
+* 3dbcddb fix: build docker image not work
+* 37ddbcf fix: docker中默认不打开浏览器
+* a75ffd9 docs: readme
+* 73c3cd1 增加 Makefile 优化编译脚本，并添加相应的说明 (#19)
+* 8b68405 (tag: v2.0.2) remove old config_test.go
+* 3e7c8d5 fix: typo
+* f8c0f96 (tag: v2.0.1) fix: 支持com.cn/org.cn的顶级域名
+* b616458 Optimize webhook code
+* e9625bb doc: 优化群晖使用说明
+* 614e445 doc: readme
+* 38f061d doc: new picture for v2.0.0
+* 79d229b (tag: v2.0.0) feat: 通过网卡获取IP
+* 2c3aab3 (tag: v1.4.4) 优化请求接口失败后提示说明
+* 64ee206 (origin/master, origin/HEAD) doc: webhook usage
+* 32de507 doc: webhook usage with dingding
+*   7362414 (tag: v1.4.3) Merge pull request #16 from jeessy2/fix-webhook
+|\
+| * 8c92d70 fix: webhook content-type
+|/
+* b0d2f1f fix: add \n
+* 15881a5 (tag: v1.4.2) fix: return error
+* d3d326a fix: temp file path error
+* 97e53d4 remove unused port
+| * 660f1fe (tag: v1.4.1) remove noused port
+|/
+* 0f5ae3c Revert "Fix bug in listen address parse."
+* 2a5613d docs: add some flags
+* 395d03f Fix bug in listen address parse.
+*   6098f99 Merge pull request #12 from Catofes/pull-request
+|\
+| * ffb957c Fix bug in listen address parse.
+| * bf242f3 Add address parser for listen flag.
+| * afdd1c7 Add more flags.
+|/
+* 953ae91 dns remove webhook
+* d905e89 docs: webhook
+* 0f15858 (tag: v1.4.0) fix: typo
+* 85cd982 docs: replace image
+* d476ddd refact: webhook
+* 3812cfb (tag: v1.3.0) feat: support webhook
+* f75a542 docs: ipv6
+*   f8441d2 Merge branch 'master' of github.com:jeessy2/ddns-go into master
+|\
+| * 3b4fbc8 (tag: v1.2.1) fix: Display id/secret when lt's length less than 3
+| * a07aecd fix: 未找到配置文件才打开浏览器
+* | 2478d9a docs: docker
+|/
+* ade143a fix: notice
+* 27e8b61 docs: support huaweicloud
+* 23766b9 (tag: v1.2.0) fix: remove sohu
+* bcbc2bc feat: support huaweicloud
+* 11d9c0b ipv4 url change to https://myip.ipip.net
+* 2c4eb18 docs: 优化打开浏览器提示
+* fa7203b (tag: v1.1.4) fix: windows can't open browser
+* 3553554 fix: pic
+* f0ac17b (tag: v1.1.3) fix: docker timezone not work
+* 1ee4571 (tag: v1.1.2) feat: 优化保存后的页面效果
+* fb393f8 (tag: v1.1.1) fix: remove err when success
+* c566930 fix: config
+* 0c57800 fix: cache err when error
+* d96e7ef (tag: v1.1.0) feat: protect your website with a password
+* df9b069 feat: 优化页面布局
+* 0c95bee docs: 增加IPV6使用说明
+* 2a3115a (tag: v1.0.2) feat: 使用alpine镜像，减少docker大小
+* 80f23fd (tag: v1.0.1) fix: docker timezone
+* fd959d7 docs: improve readme
+* e1447f6 (tag: v1.0.0) docs: improve readme
+* d52ec7e docs: 增加查看日志说明
+* f4d91a5 feat: 在网页中快速查看最近50条日志
+* 3a485a2 (tag: v0.0.7) docs: 修改推荐的ipv6接口
+* b81771e chore:优化逻辑
+* 1c0b738 feat: Hide secret
+* e279c53 fix: Close response after StatusCode !=200
+* 7cf137e 优化使用说明
+* 0d250aa static pages
+* 2670588 fix: 阿里云支持不带子域名
+* 3a76750 Add a help for selected dns
+* edd9e04 (tag: v0.0.6) dnspod format json，subDomain查询特殊处理
+* bd52230 fix dnspod subdomain parm
+*   6680efa Merge pull request #4 from terrydash/master
+|\
+| * 9f0033f Update index.go
+| * b148a08 2020-09-1 #1 fix dnspod subdomain parm
+| * 82f8da6 2020-09-1 #1 fix dnspod subdomain parm
+| * 9dbbc59 2020-09-1 #1 fix dnspod subdomain parm
+|/
+* 6e7c182 (tag: v0.0.5) fix release log
+* 2f2a246 add releases button
+* a4c1b9e update image
+* 9f91ea8 optimize
+* 3072ec1 support cloudflare
+* 0ccc144 fix: typo
+* 43ab41d readme
+* 0254057 readme
+* 2cd9d24 readme
+* c590219 use golang:alpine
+* c15c657 (tag: v0.0.4) Add LICENSE
+* 89237e2 更新支持dnspod文档
+* 53088cb 优化页面效果
+* 71d4824 feat: support dnspod
+* f325621 (tag: v0.0.3) fix: 处理用户输入的域名信息
+*   b81b321 Merge branch 'master' of github.com:jeessy2/ddns-go
+|\
+| * 3cd02a8 docker使用
+| * 5f76fd0 (tag: v0.0.2) docker image
+| * 818cb86 docker support
+| * 346d23f (tag: v0.0.1) product mode
+| * 0ab4214 update readme
+| * a9ced7d update readme
+| * 29273ac readme
+| * c977c09 name change to release
+| * c455438 go-release
+| * f25ac2b release
+| * 10670cc release
+| * 80ffedc zip
+| * 929d6f6 create release
+| * 22de64d remove static
+| * bc768d4 go get go-bindata
+| *   19fba31 Merge branch 'master' of github.com:jeessy2/ddns-go into master
+| |\
+| | * 1da0f90 Create go.yml
+| * | 56dec4c readme
+| |/
+| *   19124d2 Merge branch 'master' of github.com:jeessy2/ddns-go into master
+| |\
+| | * a2c80f6 readme
+| | * 4db13f2 Run Timer
+| | * 68f786e static data
+| * | 0d0ea53 readme
+| * | 0aa6265 Run Timer
+| * | 1bd7506 static data
+| * | d957542 package
+| * | 7246881 web support
+| * | e9ea860 using enable flag
+| * | a50e218 alidns
+| * | 56c7036 new
+| * | b828cce init
+* | | 58310f1 fix typo
+| |/
+|/|
+* | 249cbc8 package
+* | 32ac938 web support
+* | c70df9c using enable flag
+* | 41a2265 alidns
+* | eff7476 new
+* | 9a05aa5 init
+|/
+* facd941 first commit
+
+
+C:\Users\wggglggg\ddns-go>git push         # 推送从上游+下游 合并后的代码到 wggglggg仓库
+Total 0 (delta 0), reused 0 (delta 0), pack-reused 0
+To https://github.com/wggglggg/ddns-go.git
+   64ee206..505168e  master -> master
+
