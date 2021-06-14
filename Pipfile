@@ -19,6 +19,7 @@ flask-migrate = "*"
 faker = "*"
 pillow = "*"
 flask-dropzone = "*"
+flask-avatars = "*"
 
 [dev-packages]
 

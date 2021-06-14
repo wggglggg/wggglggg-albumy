@@ -49,6 +49,10 @@ class BaseConfig(object):
         ALBUMY_PHOTO_SIZE['medium']: '_m',
     }
 
+    # avatars头像保存配置
+    AVATARS_SAVE_PATH = os.path.join(ALBUMY_UPLOAD_PATH, 'get_avatar')
+    AVATARS_SIZE_TUPLE = (30, 100, 200)
+
 # 开发环境配置, 继承于基本配置, 单独添加了数据库存放地址
 class DevelopmentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir , 'albumy-dev.db')

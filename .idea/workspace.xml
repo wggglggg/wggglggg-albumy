@@ -2,24 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bc54b7c3-ee28-464d-82b5-033bda65921e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/ignore.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/migrations/versions/a05c096ad965_add_upload_m_and__s.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/uploads/0a359a32ed4342088b93cd79e1ec0318.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/uploads/0a359a32ed4342088b93cd79e1ec0318_m.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/uploads/0a359a32ed4342088b93cd79e1ec0318_s.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pipfile" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pipfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/albumy-dev.db" beforeDir="false" afterPath="$PROJECT_DIR$/albumy-dev.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/albumy-dev.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/bluepoints/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/bluepoints/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/extentions.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/extentions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gittest.txt" beforeDir="false" afterPath="$PROJECT_DIR$/gittest.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uploads/1f928b6a000643a29917bd2a978180c3.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/uploads/6a0df7ac544043ce91a78ad0be0dd053.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/uploads/85129ae961cf4b0c96feca9f6beaa41a.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/uploads/8e666fbff799495eb9f6a6d7ebb4f81d.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/uploads/f03a3abc840342038f2d2ed15cfe5971.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/uploads/f8b89322a1ab4603ab35e380aaced4fb.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/README" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/alembic.ini" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/env.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/script.py.mako" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/versions/a05c096ad965_add_upload_m_and__s.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/versions/ebb761e1f9f5_first_create.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/uploads/0a359a32ed4342088b93cd79e1ec0318.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/uploads/0a359a32ed4342088b93cd79e1ec0318_m.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/uploads/0a359a32ed4342088b93cd79e1ec0318_s.jpg" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,6 +62,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../flask web/albumy" />
     <property name="node.js.detected.package.stylelint" value="true" />
@@ -127,7 +130,9 @@
       <workItem from="1623544309723" duration="1260000" />
       <workItem from="1623550617543" duration="288000" />
       <workItem from="1623550926047" duration="3632000" />
-      <workItem from="1623570848497" duration="3991000" />
+      <workItem from="1623570848497" duration="5277000" />
+      <workItem from="1623584579492" duration="185000" />
+      <workItem from="1623629931933" duration="12946000" />
     </task>
     <task id="LOCAL-00001" summary="login.manager">
       <created>1623476339979</created>
@@ -147,7 +152,7 @@
     <option name="LAST_COMMIT_MESSAGE" value="" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/wggglggg_albumy$Run_hello.coverage" NAME="Run hello Coverage Results" MODIFIED="1623553266745" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/wggglggg_albumy$Run_hello.coverage" NAME="Run hello Coverage Results" MODIFIED="1623648307923" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/wggglggg_albumy$wggglggg_albumy.coverage" NAME="wggglggg-albumy Coverage Results" MODIFIED="1623482806507" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

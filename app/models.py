@@ -4,6 +4,7 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import current_app
 from datetime import datetime
+from flask_avatars import Identicon
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -18,6 +19,11 @@ class User(db.Model, UserMixin):
 
     confirmed = db.Column(db.Boolean, default=False)# 存储用户是否确认邮箱链接.
 
+    # avatars头像图片配置, small小, medium中, large大
+    avatars_s = db.Column(db.String(64))
+    avatars_m = db.Column(db.String(64))
+    avatars_l = db.Column(db.String(64))
+
     #与 Role表关联
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     role = db.relationship('Role', back_populates='users')
@@ -26,16 +32,30 @@ class User(db.Model, UserMixin):
     photos = db.relationship('Photo', back_populates='author', cascade='all')
 
     # User初始化, 注册一个用户, 马上给一个权限, 只区分 一般用户 与 大管理员
-    def init(self, **kwargs):
+    def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         self.set_role()
+        self.generate_avatar()
+
 
     def set_role(self):
-        if self.email == current_app.config['ALBUMY_ADMIN_EMAIL']:
-            self.role = Role.query.filter_by(name='Administrator').first()
-        else:
-            self.role = Role.query.filter_by(name='User').first()
+        if self.role is None:
+            if self.email == current_app.config['ALBUMY_ADMIN_EMAIL']:
+                self.role = Role.query.filter_by(name='Administrator').first()
+            else:
+                self.role = Role.query.filter_by(name='User').first()
+            db.session.commit()
+
+    # 头像图片小中大三尺寸生成, 使用的是Identicon插件
+    def generate_avatar(self):
+        avatars = Identicon()
+        # 自动生成三个尺寸, 尺寸大小在conifg.py里面配置, text接收唯一不重复信息,例如邮箱,或者名字
+        filename = avatars.generate(text=self.email)
+        self.avatars_s = filename[0]
+        self.avatars_m = filename[1]
+        self.avatars_l = filename[2]
         db.session.commit()
+
 
 
     ## 用户密码
