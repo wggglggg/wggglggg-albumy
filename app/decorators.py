@@ -13,7 +13,7 @@ def confirm_required(func):
                 'Not receive the email?'
                 '<a class="alert-link" href="%s">Resend Confirm Email</a>' % url_for('auth.resend_confirm_email'))
             flash(message, 'warning')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('main.index'))
 
         return func(*args, **kwargs)
 
@@ -47,7 +47,7 @@ def permission_required(permission_name):
     return decorate
 
 def admin_required(func):
-    return permission_required('Administrator')(func)
+    return permission_required('ADMINISTER')(func)
 
 '''
 def permission_required(permission):

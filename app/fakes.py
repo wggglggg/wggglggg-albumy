@@ -40,8 +40,8 @@ def fake_user(count=10):
 
 def fake_pic():
     basedir = os.path.abspath(os.path.dirname(__file__))
-    i = 1
-    for i in range(11):
+
+    for i in range(1,121):
 
         r = lambda: random.randint(128, 255)  #  随机取128 到 255之间任意数字
         img = Image.new(mode='RGB', size=(800,800), color=(r(), r(), r()))

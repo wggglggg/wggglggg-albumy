@@ -1,0 +1,28 @@
+{% from 'bootstrap/nav.html' import render_nav_item %}
+
+<div class="row">
+    <div class="col-md-3">
+        <img class="img-fluid rounded" src="{{ url_for('main.get_avatar', filename=current_user.avatars_l) }}">
+    </div>
+    <div class="col-md-9">
+        <h2>{{ user.name }}<small class="text-muted">{{ user.username }}</small></h2>
+        {% if user.bio %}<p>{{ user.bio }}</p>{% endif %}
+        <p>
+            {% if user.website %}
+                <span class="oi oi-link-intact"></span>
+                <a href="{{ user.website }}" target="_blank">{{ user.website | truncate(30) }}</a> {# 网址显示 一部分 #}
+            {% endif  %}
+            {% if user.location %}
+                <span class="oi oi-map-marker"></span>
+                <a href="http://api.map.baidu.com/geocoder?address={{ user.location }}&output=html&src=webapp.baidu.openAPIdemo" target="_blank">{{ user.location | truncate(30) }}</a>
+            {% endif %}
+            <span class="oi oi-calendar"></span>
+            Joined {{ moment(user.member_since).format('LL') }}
+        </p>
+    </div>
+</div>
+<div class="user-nav">
+    <ul class="nav nav-tabs">
+        {{ render_nav_item('user.index', 'Photo', user.photos | length, username=user.username) }}
+    </ul>
+</div>

@@ -130,7 +130,7 @@ def register_commans(app):
     def pic():
         from app.fakes import fake_pic
         fake_pic()
-        click.echo('10张图片生成完成')
+        click.echo('120张图片生成完成')
 
     # 给已存在用户设立权限
     @app.cli.command()

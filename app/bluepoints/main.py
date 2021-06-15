@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, url_for, request, current_app, send_from_directory
+from flask import Blueprint, render_template, url_for, request, current_app, send_from_directory, flash, redirect, abort
 from flask_login import login_required, current_user
 from app.decorators import permission_required, confirm_required
 from flask_dropzone import random_filename
@@ -50,4 +50,62 @@ def upload():
 # 返回avatar图片, 要求filename文件名作参数
 @main_bp.route('/get_avatar/<path:filename>')
 def get_avatar(filename):
+
     return send_from_directory(current_app.config['AVATARS_SAVE_PATH'], filename)
+
+# 返回image图片, 要求filename文件名作参数
+@main_bp.route('/uploads/<path:filename>')
+def get_image(filename):
+    return send_from_directory(current_app.config['ALBUMY_UPLOAD_PATH'], filename)
+
+# 每一张的图片详情
+@main_bp.route('/show_photo/<int:photo_id>')
+def show_photo(photo_id):
+    photo = Photo.query.get_or_404(photo_id)
+    return render_template('main/photo.html', photo=photo)
+
+# PhotoSider 向前pre
+@main_bp.route('/photo_previous/<int:photo_id>')
+def photo_previous(photo_id):
+    photo = Photo.query.get_or_404(photo_id)
+    print('phono', photo)
+    photo_p = Photo.query.with_parent(photo.author).filter(Photo.id < photo_id).order_by(Photo.id.desc()).first()
+    print('photo_p', photo_p)
+    if photo_p is None:
+        flash('这是最前面一张', 'info')
+        return redirect(url_for('main.show_photo', photo_id=photo_id))
+    return redirect(url_for('main.show_photo', photo_id=photo_p.id))
+
+# PhotoSider 向后next
+@main_bp.route('/photo_next/<int:photo_id>')
+def photo_next(photo_id):
+    photo = Photo.query.get_or_404(photo_id)
+    photo_n = Photo.query.with_parent(photo.author).filter(Photo.id > photo_id).order_by(Photo.id.asc()).first()
+    if photo_n is None:
+        flash('这是最后一张', 'info')
+        return redirect(url_for('main.show_photo', photo_id=photo_id))
+    return redirect(url_for('main.show_photo', photo_id=photo_n.id))
+
+# 删除某张照片
+@main_bp.route('/delete_photo/<int:photo_id>', methods=['GET', 'POST'])
+@login_required
+def delete_photo(photo_id):
+
+    photo = Photo.query.get_or_404(photo_id)
+
+    if current_user != photo.author:
+        abort(404)
+    db.session.delete(photo)
+    db.session.commit()
+    flash('照片已经删除', 'info')
+
+    photo_n = Photo.query.with_parent(photo.author).filter(Photo.id > photo_id).order_by(Photo.id.asc()).first()
+
+    if photo_n is None:
+        photo_p = Photo.query.with_parent(photo.author).filter(Photo.id < photo_id).orber_by(Photo.id.desc()).first()
+
+        if photo_p is None:
+            return redirect(url_for('user.index', username=photo.author.username))
+
+        return redirect(url_for('main.show_photo', photo_id=photo_p.id))
+    return redirect(url_for('main.show_photo', photo_id=photo_n.id))

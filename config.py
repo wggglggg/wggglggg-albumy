@@ -33,14 +33,14 @@ class BaseConfig(object):
     # dropzone 文件上传配置
     DROPZONE_MAX_FILE_SIZE = 5                              # 单文件最大5m
     MAX_CONTENT_LENGTH = 5 * 1024 * 1024                    # 5m
-    DROPZONE_MAX_FILES = 30                                 # 单次上传文件最多30个
+    DROPZONE_MAX_FILES = 150                                 # 单次上传文件最多30个
     DROPZONE_ALLOWED_FILE_TYPE = 'image'
     # DROPZONE_ALLOWED_FILE_CUSTOM = True                   # 如果要自定义文件类型,这条要设置成True
     # DROPZONE_ALLOWED_FILE_TYPE = 'image/*, .pdf, .txt'
     DROPZONE_ENABLE_CSRF = True
 
+    # 照片配置
     ALBUMY_UPLOAD_PATH = os.path.join(basedir, 'uploads')   # 照片上传到保存的文件夹
-
     ALBUMY_PHOTO_SIZE = {
         'small': 400,
         'medium': 800   }
@@ -48,6 +48,7 @@ class BaseConfig(object):
         ALBUMY_PHOTO_SIZE['small']: '_s',
         ALBUMY_PHOTO_SIZE['medium']: '_m',
     }
+    ALBUMY_PHOTO_PER_PAGE = 12
 
     # avatars头像保存配置
     AVATARS_SAVE_PATH = os.path.join(ALBUMY_UPLOAD_PATH, 'get_avatar')

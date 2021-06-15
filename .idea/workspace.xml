@@ -1,27 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="bc54b7c3-ee28-464d-82b5-033bda65921e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/main/_comments.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/main/_photo_sidebar.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/main/photo.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/user/_header.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore.txt" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pipfile" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pipfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/albumy-dev.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/albumy-dev.db" beforeDir="false" afterPath="$PROJECT_DIR$/albumy-dev.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/bluepoints/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/bluepoints/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/extentions.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/extentions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/bluepoints/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/bluepoints/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/decorators.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/decorators.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/fakes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/fakes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/images/0.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/images/1.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/1.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/images/10.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/10.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/images/2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/2.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/images/3.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/3.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/images/4.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/4.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/images/5.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/5.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/images/6.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/6.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/images/7.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/7.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/images/8.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/8.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/images/9.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/9.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/js/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/script.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/macros.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/macros.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/user/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/user/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/README" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/alembic.ini" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/env.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/script.py.mako" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/versions/a05c096ad965_add_upload_m_and__s.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/versions/ebb761e1f9f5_first_create.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/uploads/0a359a32ed4342088b93cd79e1ec0318.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/uploads/0a359a32ed4342088b93cd79e1ec0318_m.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/uploads/0a359a32ed4342088b93cd79e1ec0318_s.jpg" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -133,6 +144,13 @@
       <workItem from="1623570848497" duration="5277000" />
       <workItem from="1623584579492" duration="185000" />
       <workItem from="1623629931933" duration="12946000" />
+      <workItem from="1623652323691" duration="6551000" />
+      <workItem from="1623659376365" duration="2748000" />
+      <workItem from="1623674743855" duration="2122000" />
+      <workItem from="1623676957690" duration="582000" />
+      <workItem from="1623724282767" duration="14210000" />
+      <workItem from="1623746320782" duration="2595000" />
+      <workItem from="1623749381615" duration="2440000" />
     </task>
     <task id="LOCAL-00001" summary="login.manager">
       <created>1623476339979</created>
@@ -152,7 +170,8 @@
     <option name="LAST_COMMIT_MESSAGE" value="" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/wggglggg_albumy$Run_hello.coverage" NAME="Run hello Coverage Results" MODIFIED="1623648307923" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/wggglggg_albumy$Run_hello.coverage" NAME="Run hello Coverage Results" MODIFIED="1623752874146" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/wggglggg_albumy$wggglggg_albumy.coverage" NAME="wggglggg-albumy Coverage Results" MODIFIED="1623482806507" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/wggglggg_albumy$main.coverage" NAME="main Coverage Results" MODIFIED="1623658961811" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app/bluepoints" />
   </component>
 </project>
