@@ -6,7 +6,7 @@
 __pycache__/
 migrations/
 .env
-.flaskenv
+
 gittext.txt
 ### dotenv ###
 .env
