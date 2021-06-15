@@ -4,36 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc54b7c3-ee28-464d-82b5-033bda65921e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/templates/main/_comments.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/templates/main/_photo_sidebar.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/templates/main/photo.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/templates/user/_header.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore.txt" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/albumy-dev.db" beforeDir="false" afterPath="$PROJECT_DIR$/albumy-dev.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/bluepoints/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/bluepoints/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/bluepoints/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/bluepoints/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/decorators.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/decorators.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/fakes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/fakes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/images/0.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/images/1.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/1.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/images/10.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/10.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/images/2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/2.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/images/3.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/3.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/images/4.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/4.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/images/5.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/5.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/images/6.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/6.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/images/7.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/7.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/images/8.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/8.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/images/9.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/images/9.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/script.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/macros.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/macros.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/user/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/user/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-    </list>
+    <list default="true" id="bc54b7c3-ee28-464d-82b5-033bda65921e" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -150,7 +121,7 @@
       <workItem from="1623676957690" duration="582000" />
       <workItem from="1623724282767" duration="14210000" />
       <workItem from="1623746320782" duration="2595000" />
-      <workItem from="1623749381615" duration="2440000" />
+      <workItem from="1623749381615" duration="2780000" />
     </task>
     <task id="LOCAL-00001" summary="login.manager">
       <created>1623476339979</created>
