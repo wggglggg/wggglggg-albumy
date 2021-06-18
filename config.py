@@ -9,9 +9,6 @@ class Operations:
 
 class BaseConfig(object):
     # 网站角色权限管理
-
-
-
     SECRET_KEY = os.getenv('SECRET_KEY')
 
 
@@ -53,6 +50,9 @@ class BaseConfig(object):
     # avatars头像保存配置
     AVATARS_SAVE_PATH = os.path.join(ALBUMY_UPLOAD_PATH, 'get_avatar')
     AVATARS_SIZE_TUPLE = (30, 100, 200)
+
+    # 照片评论配置
+    ALBUMY_COMMENT_PER_PAGE = 10
 
 # 开发环境配置, 继承于基本配置, 单独添加了数据库存放地址
 class DevelopmentConfig(BaseConfig):

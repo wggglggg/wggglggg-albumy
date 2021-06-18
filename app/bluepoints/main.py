@@ -2,9 +2,11 @@ from flask import Blueprint, render_template, url_for, request, current_app, sen
 from flask_login import login_required, current_user
 from app.decorators import permission_required, confirm_required
 from flask_dropzone import random_filename
-from app.models import Photo
+from app.models import Photo, Tag, Comment
 from app.extentions import db
-from app.utils import resize_image
+from app.utils import resize_image, flash_errors
+from app.forms.main import DescriptionForm, TagForm, CommentForm
+
 import os
 
 main_bp = Blueprint('main', __name__)
@@ -62,7 +64,16 @@ def get_image(filename):
 @main_bp.route('/show_photo/<int:photo_id>')
 def show_photo(photo_id):
     photo = Photo.query.get_or_404(photo_id)
-    return render_template('main/photo.html', photo=photo)
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['ALBUMY_COMMENT_PER_PAGE']
+    pagination = Comment.query.with_parent(photo).order_by(Comment.timestamp.asc()).paginate(page, per_page=per_page)
+    comments = pagination.items
+
+    tag_form = TagForm()
+    comment_form = CommentForm()
+    description_form = DescriptionForm()
+    description_form.description.data = photo.description
+    return render_template('main/photo.html', photo=photo, comments=comments, comment_form=comment_form, description_form=description_form, tag_form=tag_form, pagination=pagination)
 
 # PhotoSider 向前pre
 @main_bp.route('/photo_previous/<int:photo_id>')
@@ -109,3 +120,130 @@ def delete_photo(photo_id):
 
         return redirect(url_for('main.show_photo', photo_id=photo_p.id))
     return redirect(url_for('main.show_photo', photo_id=photo_n.id))
+
+# 被举报函数 计数
+@main_bp.route('/report_photo/<int:photo_id>', methods=['GET', 'POST'])
+@login_required
+@confirm_required
+def report_photo(photo_id):
+    photo = Photo.query.get_or_404(photo_id)
+    photo.flag += 1
+    db.session.commit()
+    flash('图片被举报', 'success')
+    return redirect(url_for('main.show_photo', photo_id=photo_id))
+
+# 编辑照片的描述
+@main_bp.route('/edit_description/<int:photo_id>', methods=['POST'])
+@login_required
+def edit_description(photo_id):
+    print('photo_id99999',photo_id)
+    photo = Photo.query.get_or_404(photo_id)
+    if current_user != photo.author:
+        abort(403)
+
+    form = DescriptionForm()
+    if form.validate_on_submit():
+        photo.description = form.description.data
+        db.session.commit()
+        flash('照片描述已更新')
+
+    flash_errors(form)
+    return redirect(url_for('main.show_photo', photo_id=photo_id))
+
+# 添加tag标签
+@main_bp.route('/new_tag/<int:photo_id>', methods=['POST'])
+@login_required
+def new_tag(photo_id):
+    photo = Photo.query.get_or_404(photo_id)
+    if current_user != photo.author:
+        abort(403)
+
+    form = TagForm()
+    if form.validate_on_submit():
+        for name in form.tag.data.split():
+            tag = Tag.query.filter_by(name=name).first()
+            if tag is None:
+                tag = Tag(name=name)
+                db.session.add(tag)
+                db.session.commit()
+
+            if tag not in photo.tags:
+                photo.tags.append(tag)
+                db.session.commit()
+        flash('标签添加成功')
+    return render_template('main/show_photo.html', photo_id=photo_id)
+
+# 删除tag标签
+@main_bp.route('/delete_tag/<int:tag_id>/<int:photo_id>', methods=['POST'])
+@login_required
+def delete_tag(tag_id, photo_id):
+    tag = Tag.query.get_or_404(tag_id)
+    photo = Photo.query.get_or_404(photo_id)
+    if current_user != photo.author:
+        abort(403)
+
+    photo.tags.remove(tag)
+    db.session.commit()
+
+    if tag.photos is None:
+        db.session.delete(tag)
+        db.session.commit()
+
+    flash('图片的tag已经删除', 'info')
+    return redirect(url_for('main.show_photo', photo_id=photo_id))
+
+@main_bp.route('/show_tag/<int:tag_id>', defaults={'order': 'by_time'})
+@main_bp.route('/show_tag/<int:tag_id>/<order>')
+def show_tag(tag_id, order):
+    tag = Tag.query.get_or_404(tag_id)
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['ALBUMY_PHOTO_PER_PAGE']
+    order_rule = 'time'
+    pagination = Photo.query.with_parent(tag).order_by(Photo.timestamp.desc()).paginate(page, per_page)
+    photos = pagination.items
+
+    if order == 'by_collects':
+        photos.sort(key=lambda x: len(x.collectors), reverse=True)
+        # photos.sort(photos, key=lambda x: len(x.collectors), reverse=True)
+        order_rule = 'collects'
+    return render_template('main/show_tag.html', tag=tag, pagination=pagination, photos=photos, order_rule=order_rule)
+
+# 发表新评论
+@main_bp.route('/new_comment/<int:photo_id>', methods=['GET', 'POST'])
+@login_required
+@permission_required('COMMENT')
+def new_comment(photo_id):
+    photo = Photo.query.get_or_404(photo_id)
+    page = request.args.get('page', 1, type=int)
+    form = CommentForm()
+    if form.validate_on_submit():
+        body = form.body.data
+        author = current_user._get_current_object()
+        comment = Comment(body=body, author=author, photo=photo)
+
+        db.session.add(comment)
+        db.session.commit()
+
+    flash_errors(form)
+    return redirect(url_for('main.show_photo', photo_id=photo_id, page=page))
+
+@main_bp.route('/set_comment/<int:photo_id>')
+@login_required
+def set_comment(photo_id):
+    photo = Photo.query.get_or_404(photo_id)
+    if current_user != photo.author:
+        abort(403)
+
+    if photo.can_comment:
+        print('if photo.can_comment', photo.can_comment)
+        photo.can_comment = False
+        flash('评论已经关闭')
+    else:
+        photo.can_comment = True
+        flash('已经开启评论功能')
+    db.session.commit()
+    return redirect(url_for('main.show_photo', photo_id=photo_id))
+
+
+
+

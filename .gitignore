@@ -7,7 +7,7 @@ __pycache__/
 migrations/
 .env
 
-gittext.txt
+
 ### dotenv ###
 .env
 

@@ -9,7 +9,6 @@ flask-sqlalchemy = "*"
 flask-login = "*"
 flask-wtf = "*"
 email-validator = "*"
-bootstrap-flask = "*"
 flask-dotenv = "*"
 python-dotenv = "*"
 flask-ckeditor = "*"
@@ -20,6 +19,7 @@ faker = "*"
 pillow = "*"
 flask-dropzone = "*"
 flask-avatars = "*"
+bootstrap-flask = "==1.04"
 
 [dev-packages]
 

@@ -1,4 +1,4 @@
-from flask import request, redirect, url_for, current_app
+from flask import request, redirect, url_for, current_app, flash
 from urllib.parse import urlparse, urljoin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, SignatureExpired, BadSignature
 from config import Operations
@@ -73,3 +73,9 @@ def resize_image(image, filename, base_width):          # imaged原图片, filen
     # 将 中/小 尺寸图片保存到原目录, optimize是否压缩, quality压缩质量保证
     img.save(os.path.join(current_app.config['ALBUMY_UPLOAD_PATH'], filename), optimize=True, quality=85)
     return filename                                       # 加上 _s/_m 的新文件名, 将来用变量接收
+
+def flash_errors(form):
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash('Error in the %s field - %s' %
+                  (getattr(form, field).label.text, error))

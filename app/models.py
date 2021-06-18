@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import current_app
 from datetime import datetime
 from flask_avatars import Identicon
+import os
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -24,12 +25,15 @@ class User(db.Model, UserMixin):
     avatars_m = db.Column(db.String(64))
     avatars_l = db.Column(db.String(64))
 
-    #与 Role表关联
+    # 与 Role表关联
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     role = db.relationship('Role', back_populates='users')
 
     # 与 photo表 关联, 设置级联为all, 当user被 删除, user.photos 也被删除
     photos = db.relationship('Photo', back_populates='author', cascade='all')
+
+    # 与 comment表关联
+    comments = db.relationship('Comment', back_populates='author', cascade='all')
 
     # User初始化, 注册一个用户, 马上给一个权限, 只区分 一般用户 与 大管理员
     def __init__(self, **kwargs):
@@ -144,17 +148,61 @@ class Permission(db.Model):
     # 与 role 表关系
     roles = db.relationship('Role', secondary=roles_permissions, back_populates='permissions')
 
+tagging = db.Table('tagging',
+                   db.Column('photo_id', db.Integer, db.ForeignKey('photo.id')),
+                   db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'))
+                   )
 
 # 上传照片表单
 class Photo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String(500))                # 照片描述
-    filename = db.Column(db.String(64))                    # 照片名字
-    filename_s = db.Column(db.String(64))                  # small照片名字
-    filename_m = db.Column(db.String(64))                  # medium照片名字
+    description = db.Column(db.String(500))                 # 照片描述
+    filename = db.Column(db.String(64))                     # 照片名字
+    filename_s = db.Column(db.String(64))                   # small照片名字
+    filename_m = db.Column(db.String(64))                   # medium照片名字
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)  # 时间戳
+    can_comment = db.Column(db.Boolean, default=True)       # 是否能评论
+    flag = db.Column(db.Integer, default=0)                 # 被举报次数
 
     # 与 user表 关联
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # 照片的作者ID
     author = db.relationship('User', back_populates='photos')    # 照片的作者
 
+    # 与tag表 关联
+    tags = db.relationship('Tag', secondary=tagging, back_populates='photos')
+
+    # # 与comment表 关联
+    comments = db.relationship('Comment', back_populates='photo', cascade='all')
+
+# # 评论表单, 与用户User, 与图片Photo 有联系
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    flag = db.Column(db.Integer, default=0)                                       # 评论被举报次数
+
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    photo_id = db.Column(db.Integer,db.ForeignKey('photo.id'))
+    replied_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
+
+    author = db.relationship('User', back_populates='comments')
+    photo = db.relationship('Photo', back_populates='comments')
+    replies = db.relationship('Comment', back_populates='replied', cascade='all')
+    replied = db.relationship('Comment', back_populates='replies', remote_side=[id]) # 表中的id用的自身的id,写在旧的一发
+
+
+# 图片删除监听函数, 如果ater_delete Photo事情发生, 会被 listens_for捕获
+@db.event.listens_for(Photo, 'after_delete', named=True)
+def delete_photos(**kwargs):
+    target = kwargs['target']   # 我猜target是photo那一行数据
+    for filename in [target.filename, target.filename_s, target.filename_m]:
+        if filename is not None:  # 如果尺寸小于800, 那么filename_m和filename存在数据为中是一个文件地址
+            path = os.path.join(current_app.config['ALBUMY_UPLOAD_PATH'], filename)
+            if os.path.exists(path): # 小尺寸的图片, s和m或许和原尺寸是同一个路径,原尺寸删除后, 可以用exists校验s m的文件是否还存在
+                db.remove(path)
+
+class Tag(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), index=True, unique=True)
+
+    photos = db.relationship('Photo', secondary=tagging, back_populates='tags')

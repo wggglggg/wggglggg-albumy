@@ -1,0 +1,106 @@
+<div class="comments" id="comments">
+    <h3>{{ photo.comments | length}} Comments
+        <small>
+            <a href="{{ url_for('main.show_photo', photo_id=photo.id, page=pagination.pages or 1) }}#comment-form">latest</a>
+        </small>
+        {% if current_user == photo.author %}
+            <a class="btn btn-link btn-xs float-right" href="{{ url_for('main.set_comment', photo_id=photo.id )}}">
+            {% if photo.can_comment %}Disable{% else %}Enable{% endif %}
+            </a>
+        {% endif %}
+    </h3>
+    <hr>
+    {% if comments %}
+        {% for comment in comments %}
+            <div class="comment">
+                <div class="comment-thumbnail">
+                    <a href="{{ url_for('user.index', username=comment.author.username) }}">
+                        <img class="rounded img-fluid avatar-s" src="{{ url_for('main.get_avatar', filename=comment.author.avatars_s) }}">
+                    </a>
+                </div>
+                <div class="comment-body">
+                    <h6>
+                        <a href="{{ url_for('user.index', username=comment.author.username) }}">
+                            {{ comment.author.name }}{# 昵称 #}
+                        </a>
+                        {% if comment.author == photo.author %}
+                            <span class="badge badge-light">Author</span>
+                        {% endif %}
+                        <small data-toggle="tooltip" data-placement="top" data-timestamp="{{ comment.timestamp }}" data-delay="500">{{ moment(comment.timestamp).fromNow(refresh=True) }}</small>
+                    </h6>
+                    <p>
+                        {% if comment.replied %}
+                            Reply
+                            <a href="{{ url_for('user.index', username=comment.replied.author.username) }}">{{ comment.replied.author.name }}</a>
+                        {% endif %}
+                        {{ comment.body }}
+                    </p>
+                </div>
+            </div>
+            <hr>
+        {% endfor %}
+        <div class="page-footer">
+            {{ render_pagination(pagination) }}
+        </div>
+
+    {% else %}
+        <p class="tip">No Comments here!</p>
+    {% endif  %}
+
+    {# 发表评论 #}
+    {% if photo.can_comment %}
+        {% if current_user.is_authenticated %}
+            {% if current_user.can('COMMENT') %}
+                <div class="alert alert-dark">
+                    Reply to {{ request.args.get('author') }}:
+                    <a class="float-right" href="{{ url_for('main.show_photo', photo_id=photo.id) }}">Cancel</a>
+                </div>
+                <div class="comment_form_area">
+                    <div class="comment-form-thumbnail">
+                        <img class="rounded img-fluid avatar-s" src="{{ url_for('main.get_avatar', filename=current_user.avatars_m) }}">
+                    </div>
+                    <div class="comment-form" id="comment=form">
+                        {{ render_form(comment_form, action=url_for('main.new_comment', photo_id=photo.id, page=pagination.pages), extra_classes="text-right") }}
+                    </div>
+                </div>
+            {% else %}
+                <p class="tip">No Permission.</p>
+            {% endif %}
+        {% else %} 
+            <p class="tip">
+                <a href="{{ url_for('auth.login') }}">Login 登录</a>
+                or
+                <a href="{{ url_for('auth.register') }}">Register 注册</a>
+            </p>
+        {% endif %}
+    {% else %}
+        <p class="tip">Comment disabled.</p>
+    {% endif %}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

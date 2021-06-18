@@ -7,7 +7,7 @@ from app.bluepoints.user import user_bp
 from app.bluepoints.auth import auth_bp
 from app.extentions import bootstrap, db, login_manager, mail, moment, ckeditor,  migrate, dropzone, csrf, avatars
 from config import config
-from app.models import User, Role, Permission, Photo
+from app.models import User, Role, Permission, Photo, Tag
 import os, click
 
 #app创建工厂, 所有要与app相挂钩的第三方都汇集到这里
@@ -114,16 +114,25 @@ def register_commans(app):
     # 生成虚拟数据
     @app.cli.command()                               # 也可以在命令行flask forge --user=50  来生成50条数据
     @click.option('--user', default=10, help='生成虚拟用户, 默认10个')
-    def forge(user):                                 # user参数是生成的个数默认是10
-        from app.fakes import fake_admin, fake_user  # 调用管理员与用户生成函数
-        # db.drop_all()
-        # db.create_all()
+    @click.option('--tag', default=20, help='生成虚拟标签 默认20个')
+    @click.option('--pic', default=120, help='生成虚拟图片, 默认120张')
+    @click.option('--comment', default=500, help='生成虚拟评论, 默认100条')
+    def forge(user,pic,tag, comment):                                 # user参数是生成的个数默认是10
+        from app.fakes import fake_admin, fake_user, fake_pic, fake_tag, fake_comment # 调用管理员与用户生成函数
+        db.drop_all()
+        db.create_all()
         click.echo('初始化权限和角色')
         Role.init_role()
         click.echo('生成管理员')
         fake_admin()
         click.echo('生成 %d 用户数据' % user)
         fake_user(user)
+        click.echo('生成 %d 标签数据' % tag)
+        fake_tag(tag)
+        click.echo('生成120张图片')
+        fake_pic(pic)
+        click.echo('生成 %d 评论' % comment)
+        fake_comment(comment)
         click.echo('生成虚拟数据结束')
 
     @app.cli.command()
@@ -153,3 +162,11 @@ def register_commans(app):
             if user.avatar_s is None and user.avatar_m is None and user.avatar_l is None:
                 user.generate_avatar()
         click.echo('所有用户头像乱完毕')
+
+    # 给先创建的图片被举报数设置为0
+    @app.cli.command()
+    def flag():
+        for photo in Photo.query.all():
+            if photo.flag is None:
+                photo.flag = 0
+        db.session.commit()
