@@ -1,5 +1,5 @@
 git config --global user.name "wggglggg"                 # 创建用户名,可以谁操作的
-git config --global user.email "wggglggg@hotmail.com"    # 创建用户邮箱 ,  可以在c:\users\xxxxx\.gitconfig 查看
+git config --global user.email "wggglggg@xxxx.com"    # 创建用户邮箱 ,  可以在c:\users\xxxxx\.gitconfig 查看
 
 # 创建仓库
 # 先在电脑上创建一个文件夹,假设我建一个gittest文件夹作为仓库, 这个文件夹作为本地仓库,再进入此仓库
@@ -876,3 +876,59 @@ Total 0 (delta 0), reused 0 (delta 0), pack-reused 0
 To https://github.com/wggglggg/ddns-go.git
    64ee206..505168e  master -> master
 
+
+# 将标签名08deletephoto  改成 标签名09deletephoto, 并删除标签名08deletephoto
+(wggglggg-albumy) C:\Users\wggglggg\OneDrive\venvs\ipthw\projects\wggglggg-albumy>git tag
+error: cannot spawn less: No such file or directory
+01test
+02basement
+03fake_data
+04sendmail
+05confirm-mail
+06role-permission
+07upload-1
+07upload-2
+08avatar
+08deletephoto
+
+# 改标签名
+(wggglggg-albumy) C:\Users\wggglggg\OneDrive\venvs\ipthw\projects\wggglggg-albumy>git tag 09delet
+ephoto 08deletephoto
+
+# 删除本地标签
+(wggglggg-albumy) C:\Users\wggglggg\OneDrive\venvs\ipthw\projects\wggglggg-albumy>git tag -d 08de
+letephoto
+Deleted tag '08deletephoto' (was 6799738)
+
+# 删除远程标签
+(wggglggg-albumy) C:\Users\wggglggg\OneDrive\venvs\ipthw\projects\wggglggg-albumy>git push origin
+ :refs/tags/08deletephoto
+To https://github.com/wggglggg/wggglggg-albumy.git
+ - [deleted]         08deletephoto
+
+
+(wggglggg-albumy) C:\Users\wggglggg\OneDrive\venvs\ipthw\projects\wggglggg-albumy>git tag -a 10se
+t_comment -m "完成set_comment"
+
+(wggglggg-albumy) C:\Users\wggglggg\OneDrive\venvs\ipthw\projects\wggglggg-albumy>git tag
+error: cannot spawn less: No such file or directory
+01test
+02basement
+03fake_data
+04sendmail
+05confirm-mail
+06role-permission
+07upload-1
+07upload-2
+08avatar
+09deletephoto
+10set_comment
+
+(wggglggg-albumy) C:\Users\wggglggg\OneDrive\venvs\ipthw\projects\wggglggg-albumy>git push --tags
+
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 171 bytes | 21.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0
+To https://github.com/wggglggg/wggglggg-albumy.git
+ * [new tag]         10set_comment -> 10set_comment

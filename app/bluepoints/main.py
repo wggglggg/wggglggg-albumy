@@ -68,6 +68,7 @@ def show_photo(photo_id):
     per_page = current_app.config['ALBUMY_COMMENT_PER_PAGE']
     pagination = Comment.query.with_parent(photo).order_by(Comment.timestamp.asc()).paginate(page, per_page=per_page)
     comments = pagination.items
+    print('pagination.pages::::', pagination.pages)
 
     tag_form = TagForm()
     comment_form = CommentForm()
@@ -215,12 +216,17 @@ def show_tag(tag_id, order):
 def new_comment(photo_id):
     photo = Photo.query.get_or_404(photo_id)
     page = request.args.get('page', 1, type=int)
+
     form = CommentForm()
     if form.validate_on_submit():
         body = form.body.data
         author = current_user._get_current_object()
         comment = Comment(body=body, author=author, photo=photo)
 
+        replied_id = request.args.get('reply')
+        if replied_id:
+            replied_comment = Comment.query.get_or_404(replied_id)
+            comment.replied = replied_comment
         db.session.add(comment)
         db.session.commit()
 
@@ -244,6 +250,34 @@ def set_comment(photo_id):
     db.session.commit()
     return redirect(url_for('main.show_photo', photo_id=photo_id))
 
+# 评论回复功能
+@main_bp.route('/reply_comment/<int:comment_id>')
+@login_required
+@permission_required('COMMENT')
+def reply_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    return redirect(url_for('main.show_photo', photo_id=comment.photo_id, reply=comment_id, author=comment.author.name) + '#comment-form')
 
+# 删除自己的评论,或者贴主删队其它人的评论
+@main_bp.route('/delete_comment/<int:comment_id>', methods=['POST'])
+@login_required
+def delete_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    if current_user != comment.author and current_user != comment.photo.author:
+        abort(403)
 
+    db.session.delete(comment)
+    db.session.commit()
+    flash("评论删除成功", "success")
+    return redirect(url_for('main.show_photo', photo_id=comment.photo_id))
 
+# 举报comment评论
+@main_bp.route('/report_comment/<int:comment_id>', methods=['POST'])
+@login_required
+@confirm_required
+def report_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    comment.flag += 1
+    db.session.commit()
+    flash('举报评论成功', 'success')
+    return redirect(url_for('main.show_photo', photo_id=comment.photo_id))

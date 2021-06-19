@@ -27,13 +27,41 @@
                             <span class="badge badge-light">Author</span>
                         {% endif %}
                         <small data-toggle="tooltip" data-placement="top" data-timestamp="{{ comment.timestamp }}" data-delay="500">{{ moment(comment.timestamp).fromNow(refresh=True) }}</small>
+                        {% if current_user.is_authenticated %}
+                        <span class="float-right">
+                            <span class="dropdown">
+                                <button class="btn btn-light btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="oi oi-ellipses"></span>
+                                </button>
+                                <span class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                {% if current_user != comment.author %}
+                                    <a class="dropdown-item btn" href="{{ url_for('main.reply_comment', comment_id=comment.id) }}">
+                                    <span class="oi oi-comment-square"></span>Reply
+                                    </a>
+                                {% endif %}
+                                {% if current_user == comment.author or current_user == photo.author %}
+                                    <a class="dropdown-item btn" data-toggle="modal" href="#!" data-href="{{  url_for('main.delete_comment', comment_id=comment.id) }}" data-target="#confirm-delete">
+                                    <span class="oi oi-trash" aria-hidden="true"></span>Delete
+                                    </a>
+                                {% endif %}
+                                    <form class="inline" method="post" action="{{ url_for('main.report_comment', comment_id=comment.id) }}">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="dropdown-item">
+                                            <span class="oi oi-warning" aria-hidden="true"></span>Report
+                                        </button>
+                                    </form>
+                                </span>
+                            </span>
+                        </span>
+                        {% endif %}
                     </h6>
                     <p>
                         {% if comment.replied %}
-                            Reply
-                            <a href="{{ url_for('user.index', username=comment.replied.author.username) }}">{{ comment.replied.author.name }}</a>
+                            <p class="alert alert-dark reply-body">
+                                <a href="{{ url_for('user.index', username=comment.replied.author.username) }}">{{ comment.replied.author.name }}</a>
+                                <br>{{ comment.replied.body }}
+                            </p>
                         {% endif %}
-                        {{ comment.body }}
+                        <p class="mb-1">{{ comment.body }}</p>
                     </p>
                 </div>
             </div>
@@ -59,8 +87,8 @@
                     <div class="comment-form-thumbnail">
                         <img class="rounded img-fluid avatar-s" src="{{ url_for('main.get_avatar', filename=current_user.avatars_m) }}">
                     </div>
-                    <div class="comment-form" id="comment=form">
-                        {{ render_form(comment_form, action=url_for('main.new_comment', photo_id=photo.id, page=pagination.pages), extra_classes="text-right") }}
+                    <div class="comment-form" id="comment-form">
+                        {{ render_form(comment_form, action=url_for('main.new_comment', photo_id=photo.id, page=pagination.pages, reply=request.args.get('reply')), extra_classes="text-right") }}
                     </div>
                 </div>
             {% else %}
