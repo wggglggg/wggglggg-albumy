@@ -5,6 +5,7 @@ from app.bluepoints.main import main_bp
 from app.bluepoints.admin import admin_bp
 from app.bluepoints.user import user_bp
 from app.bluepoints.auth import auth_bp
+from app.bluepoints.ajax import ajax_bp
 from app.extentions import bootstrap, db, login_manager, mail, moment, ckeditor,  migrate, dropzone, csrf, avatars
 from config import config
 from app.models import User, Role, Permission, Photo, Tag
@@ -36,6 +37,7 @@ def register_blueprint(app):
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(user_bp, url_prefix='/user')
     app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(ajax_bp, url_prefix='/ajax')
 
 # 注册日志
 def register_loggin(app):

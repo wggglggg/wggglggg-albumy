@@ -35,6 +35,9 @@ class User(db.Model, UserMixin):
     # 与 comment表关联
     comments = db.relationship('Comment', back_populates='author', cascade='all')
 
+    # 与collect表 关联
+    collections = db.relationship('Collect', back_populates='collector', cascade='all')
+
     # User初始化, 注册一个用户, 马上给一个权限, 只区分 一般用户 与 大管理员
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -78,6 +81,22 @@ class User(db.Model, UserMixin):
     def can(self, permission_name):
         permission = Permission.query.filter_by(name=permission_name).first()
         return permission is not None and self.role is not None and permission in self.role.permissions
+
+    # 验证是否收藏 收藏 与 删除收藏
+    def is_collecting(self, photo):                              # 返回布尔True False来验证该图片是否收藏了
+        return Collect.query.with_parent(self).filter_by(collected_id=photo.id).first()
+
+    def collect(self,photo):
+        if not self.is_collecting(photo):
+            collect = Collect(collector=self, collected=photo)
+            db.session.add(collect)
+            db.session.commit()
+
+    def uncollect(self, photo):
+        collect = Collect.query.with_parent(self).filter_by(collected_id=photo.id).first()
+        if collect:
+            db.session.delete(collect)
+            db.session.commit()
 
 
 # 每个角色有多个权限 , 每个权限也有多个角色,所以要关联表
@@ -174,6 +193,9 @@ class Photo(db.Model):
     # # 与comment表 关联
     comments = db.relationship('Comment', back_populates='photo', cascade='all')
 
+    # 与collect表 关联
+    collectors = db.relationship('Collect', back_populates='collected', cascade='all')
+
 # # 评论表单, 与用户User, 与图片Photo 有联系
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -201,8 +223,21 @@ def delete_photos(**kwargs):
             if os.path.exists(path): # 小尺寸的图片, s和m或许和原尺寸是同一个路径,原尺寸删除后, 可以用exists校验s m的文件是否还存在
                 db.remove(path)
 
+# 图片标签
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True, unique=True)
 
     photos = db.relationship('Photo', secondary=tagging, back_populates='tags')
+
+# 收藏者与被收藏的图片
+class Collect(db.Model):
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)         # 被收藏时的时间戳
+
+    # user  photo表的外键
+    collector_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    collected_id = db.Column(db.Integer, db.ForeignKey('photo.id'), primary_key=True)
+
+    # 与user  photo表的 关系
+    collector = db.relationship('User', back_populates='collections', lazy=False)
+    collected = db.relationship('Photo', back_populates='collectors', lazy=False)

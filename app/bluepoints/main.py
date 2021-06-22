@@ -281,3 +281,31 @@ def report_comment(comment_id):
     db.session.commit()
     flash('举报评论成功', 'success')
     return redirect(url_for('main.show_photo', photo_id=comment.photo_id))
+
+# 图片的收藏
+@main_bp.route('/collect/<int:photo_id>', methods=['POST'])
+@login_required
+@confirm_required
+@permission_required('COLLECT')
+def collect(photo_id):
+    photo = Photo.query.get_or_404(photo_id)
+    if current_user.is_collecting(photo):
+        flash("已经收藏过了", 'info')
+        return redirect(url_for('main.show_photo', photo_id=photo_id))
+
+    current_user.collect(photo)
+    flash('图片已经收藏成功', 'success')
+    return redirect(url_for('main.show_photo', photo_id=photo_id))
+
+# 图片取消收藏
+@main_bp.route('/uncollect/<int:photo_id>', methods=['POST'])
+@login_required
+def uncollect(photo_id):
+    photo = Photo.query.get_or_404(photo_id)
+    if not current_user.is_collecting(photo):
+        flash('你没有收藏此图文', 'info')
+        return redirect(url_for('main.show_photo', photo_id=photo_id))
+
+    current_user.uncollect(photo)
+    flash('已取消收藏', 'info')
+    return redirect(url_for('main.show_photo', photo_id=photo_id))
