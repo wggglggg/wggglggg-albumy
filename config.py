@@ -45,6 +45,7 @@ class BaseConfig(object):
         ALBUMY_PHOTO_SIZE['small']: '_s',
         ALBUMY_PHOTO_SIZE['medium']: '_m',
     }
+    # 自己收藏的图片 和 自己上传的图片 用的同一个配置
     ALBUMY_PHOTO_PER_PAGE = 12
 
     # avatars头像保存配置
@@ -53,6 +54,9 @@ class BaseConfig(object):
 
     # 照片评论配置
     ALBUMY_COMMENT_PER_PAGE = 10
+    # 收藏者分布配置
+    ALBUMY_USER_PER_PAGE = 10
+
 
 # 开发环境配置, 继承于基本配置, 单独添加了数据库存放地址
 class DevelopmentConfig(BaseConfig):

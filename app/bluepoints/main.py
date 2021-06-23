@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, url_for, request, current_app, sen
 from flask_login import login_required, current_user
 from app.decorators import permission_required, confirm_required
 from flask_dropzone import random_filename
-from app.models import Photo, Tag, Comment
+from app.models import Photo, Tag, Comment, Collect, User
 from app.extentions import db
 from app.utils import resize_image, flash_errors
 from app.forms.main import DescriptionForm, TagForm, CommentForm
@@ -309,3 +309,14 @@ def uncollect(photo_id):
     current_user.uncollect(photo)
     flash('已取消收藏', 'info')
     return redirect(url_for('main.show_photo', photo_id=photo_id))
+
+# 展示图片有哪些 收藏者 , 因为收藏者或许有很多, 需要分页,这就需要写pagination
+@main_bp.route('/show_collectors/<int:photo_id>')
+def show_collectors(photo_id):
+    photo = Photo.query.get_or_404(photo_id)
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['ALBUMY_USER_PER_PAGE']
+    pagination = Collect.query.with_parent(photo).order_by(Collect.timestamp.asc()).paginate(page,per_page=per_page)
+    collects = pagination.items
+    return render_template('main/collectors.html', photo=photo, pagination=pagination, collects=collects)
+

@@ -1,3 +1,4 @@
+{# 显示每一张图片 #}
 {% macro photo_card(photo) %}
 <div class="photo-card card">
     <a class="card-thumbnail" href="{{ url_for('main.show_photo', photo_id=photo.id) }}">
@@ -7,5 +8,17 @@
         <span class="oi oi-comment-square"></span>{{ photo.comments | length}} {# 评论条数 #}
         <span class="oi oi-star">{{ photo.collectors | length }}</span> {# 关注者的数量 #}
     </div>
+</div>
+{% endmacro %}
+
+{#  显示每一个收藏者 #}
+{% macro user_card(user) %}
+<div class="user-card text-center">
+    <a href="{{ url_for('user.index', username=user.username) }}">
+        <img class="rounded img-fluid avatar-m" src="{{ url_for('main.get_avatar', filename=user.avatars_m) }}">
+    </a>
+    <h6>
+        <a href="{{ url_for('user.index', username=user.username) }}">{{ user.name }}</a>
+    </h6>
 </div>
 {% endmacro %}
