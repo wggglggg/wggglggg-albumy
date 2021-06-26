@@ -1,6 +1,6 @@
 
 from flask import Flask, render_template, current_app
-
+from flask_wtf.csrf import CSRFError
 from app.bluepoints.main import main_bp
 from app.bluepoints.admin import admin_bp
 from app.bluepoints.user import user_bp
@@ -26,7 +26,7 @@ def create_app(config_name=None):
     register_loggin(app)                # 注册日志
     register_shell_context(app)         # 注册上下文
     register_template_context(app)      # 注册模板上下文
-    register_errors(app)                # 注册错误处理器
+    register_errorhandlers(app)                # 注册错误处理器
     register_commans(app)               # 注册命令行处理器
 
     return app
@@ -67,26 +67,30 @@ def register_template_context(app):
     pass
 
 # errors处理器, 报错的页面放在这
-def register_errors(app):
+def register_errorhandlers(app):
     @app.errorhandler(400)
     def bad_request(e):
         return render_template('errors/400.html'), 400
 
     @app.errorhandler(403)
-    def bad_request(e):
+    def forbidden(e):
         return render_template('errors/403.html'), 403
 
     @app.errorhandler(404)
-    def bad_request(e):
+    def page_not_found(e):
         return render_template('errors/404.html'), 404
 
     @app.errorhandler(413)
-    def bad_request(e):
+    def request_entity_too_large(e):
         return render_template('errors/413.html'), 413
 
     @app.errorhandler(500)
-    def bad_request(e):
+    def internal_server_error(e):
         return render_template('errors/500.html'), 500
+
+    @app.errorhandler(CSRFError)
+    def handle_csrf_error(e):
+        return render_template('errors/400.html', description=e.description), 500
 
 
 # flask 命令行处理器

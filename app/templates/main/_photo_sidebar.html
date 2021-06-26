@@ -1,3 +1,6 @@
+{% from 'macros.html' import follow_area with context %}
+
+
 <nav aria-label="Page navigation">
     <ul class="pagination">
         <li class="page-item">
@@ -19,6 +22,7 @@
                     <a href="{{ url_for('user.index', username=photo.author.username) }}">{{ photo.author.name }}</a>
                 </h6>
                 <p class="card-subtitle md-2 text-muted">{{ photo.author.username }}</p>
+                {{ follow_area(user=photo.author) }}
             </div>
         </div>
     </div>
@@ -89,7 +93,7 @@
                 </form>
             {% endif %}
         {% else %}
-            <form class="inline" method="post" action="{{ url_for('main.collect', photo_id=photo_id) }}">
+            <form class="inline" method="post" action="{{ url_for('main.collect', photo_id=photo.id) }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="btn btn-primary btn-sm"><span class="oi oi-star"></span>Collect</button>
             </form>

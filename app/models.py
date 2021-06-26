@@ -7,6 +7,19 @@ from datetime import datetime
 from flask_avatars import Identicon
 import os
 
+
+# 关注别人 与 被别人关注 记录关注时的时间
+class Follow(db.Model):
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)  # 被收藏时的时间戳
+
+    # User的外键
+    follower_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)  # 关注者id
+    followed_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)  # 被关注者id
+
+    follower = db.relationship('User', back_populates='following', foreign_keys=[follower_id], lazy='joined')    # 关注者
+    followed = db.relationship('User', back_populates='followers', foreign_keys=[followed_id], lazy='joined')    # 被关注者
+
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, index=True)        # 注册的用户名
@@ -38,11 +51,19 @@ class User(db.Model, UserMixin):
     # 与collect表 关联
     collections = db.relationship('Collect', back_populates='collector', cascade='all')
 
+    # 与follow表 关联
+    ## 当前用户关注正在关注的
+    following = db.relationship('Follow', back_populates='follower', cascade='all', lazy='dynamic', foreign_keys=[Follow.follower_id])
+    ## 当前用户的关注者
+    followers = db.relationship('Follow', back_populates='followed', cascade='all', lazy='dynamic', foreign_keys=[Follow.followed_id])
+
     # User初始化, 注册一个用户, 马上给一个权限, 只区分 一般用户 与 大管理员
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         self.set_role()
         self.generate_avatar()
+        self.follow(self)        #  关注自己, 可以看到自己的动态
+
 
 
     def set_role(self):
@@ -98,6 +119,27 @@ class User(db.Model, UserMixin):
             db.session.delete(collect)
             db.session.commit()
 
+    # 判断是否关注了别人, 是否被某人关注了, 关注功能,  取消关注功能
+    def is_following(self, user):
+
+        if user.id is None:
+            return  False
+        return self.following.filter_by(followed_id=user.id).first() is not None
+
+    def is_followed_by(self, user): # 去关注者里
+        return self.followers.filter_by(follower_id=user.id).first() is not None
+
+    def follow(self, user):
+        if not self.is_following(user):
+            follow = Follow(follower=self, followed=user)
+            db.session.add(follow)
+            db.session.commit()
+
+    def unfollow(self,user):
+        follow = self.following.filter_by(followed_id=user.id).first()
+        if follow is not None:
+            db.session.delete(follow)
+            db.session.commit()
 
 # 每个角色有多个权限 , 每个权限也有多个角色,所以要关联表
 roles_permissions = db.Table('roles_permissions',
@@ -241,3 +283,4 @@ class Collect(db.Model):
     # 与user  photo表的 关系
     collector = db.relationship('User', back_populates='collections', lazy=False)
     collected = db.relationship('Photo', back_populates='collectors', lazy=False)
+

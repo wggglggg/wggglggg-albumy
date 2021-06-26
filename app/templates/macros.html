@@ -20,5 +20,36 @@
     <h6>
         <a href="{{ url_for('user.index', username=user.username) }}">{{ user.name }}</a>
     </h6>
+    {{ follow_area(user) }}
 </div>
+{% endmacro %}
+
+{# 关注操作区域 #}
+{% macro follow_area(user) %}
+    {% if current_user.is_authenticated %}
+        {% if current_user != user %}                           <!-- 当前用户 不是 自己 会显示 取消关注按键, 反之就是不对自己取关  -->
+            {% if current_user.is_following(user) %}            <!--如果当前用户已经关注了这位user -->
+                <form class="inline" method="post" action="{{ url_for('user.unfollow', username=user.username, next=request.full_path) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-dark btn-sm">Unfollow</button>
+                    {% if current_user.is_followed_by(user) %}  <!--如果当前用户 与 这位user 互关注了 -->
+                        <p class="badge badge-light">Followed each other</p> <!--显示互关标志-->
+                    {% endif %}
+                </form>
+            {% else %}                                          <!--如果当前用户 没有关注 这位user -->
+                <form class="inline" method="post" action="{{ url_for('user.follow', username=user.username, next=request.full_path) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-primary btn-sm">Follow</button>
+                    {% if current_user.is_followed_by(user) %}
+                        <p class="badge badge-light">Follows you</p>          <!--显示 他/她关注你了 -->
+                    {% endif %}
+                </form>
+            {% endif %}
+        {% endif %}
+    {% else %}
+        <form class="inline" method="post" action="{{ url_for('user.follow', username=user.username) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-primary btn-sm">Follow</button>
+        </form>
+    {% endif %}
 {% endmacro %}
