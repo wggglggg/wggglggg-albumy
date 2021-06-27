@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template,redirect,url_for,request, current_app, flash
-from app.models import User, Photo, Collect
+from app.models import User, Photo, Collect, Follow
 from flask_login import current_user, login_required
 from app.utils import redirect_back
 from app.decorators import confirm_required, permission_required
@@ -59,3 +59,22 @@ def unfollow(username):
     flash('已取关', 'info')
     return redirect_back()
 
+# 显示关注者列表, 哪些人正在关注这个人username
+@user_bp.route('show_followers/<username>')
+def show_followers(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['ALBUMY_USER_PER_PAGE']
+    pagination = user.followers.filter(Follow.follower_id != user.id).paginate(page, per_page=per_page)
+    follows = pagination.items
+    return render_template('user/show_followers.html', user=user, pagination=pagination, follows=follows)
+
+# 显示username正在关注哪些人
+@user_bp.route('/show_following/<username>')
+def show_following(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['ALBUMY_USER_PER_PAGE']
+    pagination = user.following.filter(Follow.followed_id != user.id).paginate(page, per_page=per_page)
+    follows = pagination.items
+    return render_template('user/show_following.html', user=user, pagination=pagination, follows=follows)

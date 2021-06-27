@@ -13,15 +13,15 @@
 
 {#  显示每一个收藏者 #}
 {% macro user_card(user) %}
-<div class="user-card text-center">
-    <a href="{{ url_for('user.index', username=user.username) }}">
-        <img class="rounded img-fluid avatar-m" src="{{ url_for('main.get_avatar', filename=user.avatars_m) }}">
-    </a>
-    <h6>
-        <a href="{{ url_for('user.index', username=user.username) }}">{{ user.name }}</a>
-    </h6>
-    {{ follow_area(user) }}
-</div>
+    <div class="user-card text-center">
+        <a href="{{ url_for('user.index', username=user.username) }}">
+            <img class="rounded  avatar-m" src="{{ url_for('main.get_avatar', filename=user.avatars_m) }}">
+        </a>
+        <h6>
+            <a href="{{ url_for('user.index', username=user.username) }}">{{ user.name }}</a>
+        </h6>
+        {{ follow_area(user) }}
+    </div>
 {% endmacro %}
 
 {# 关注操作区域 #}

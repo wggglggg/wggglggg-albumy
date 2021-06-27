@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+{% from 'macros.html' import user_card with context %}
+
+{% block title %}{{ user.name }}`s Followers{% endblock %}
+
+{% block content %}
+    {% include 'user/_header.html' %}
+    <div class="row">
+        <div class="col-md-12">
+            {% if follows  %}                      <!--假设user是张三, follows就是关注张三的这一群人的信息-->
+                {% for follow in follows %}                     <!--关注张三的, 每一条记录与时间戳-->
+                    {% if follow.follower != user %}            <!--要排除掉张三关注张三自己这个情况-->
+                        {{ user_card(user=follow.follower) }}   <!--渲染关注张三的人-->
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div class="tip">
+                    <h3>{{ user.name }} has no followers here.</h3>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% if follows | length != 0 %}
+        <div class="page-footer">
+            {{ render_pagination(pagination) }}
+        </div>
+    {% endif %}
+{% endblock %}

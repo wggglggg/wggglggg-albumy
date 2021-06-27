@@ -172,7 +172,7 @@ def new_tag(photo_id):
                 photo.tags.append(tag)
                 db.session.commit()
         flash('标签添加成功')
-    return render_template('main/show_photo.html', photo_id=photo_id)
+    return redirect(url_for('main.show_photo', photo_id=photo_id))  #  敲成了render_template
 
 # 删除tag标签
 @main_bp.route('/delete_tag/<int:tag_id>/<int:photo_id>', methods=['POST'])

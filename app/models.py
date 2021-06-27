@@ -52,10 +52,10 @@ class User(db.Model, UserMixin):
     collections = db.relationship('Collect', back_populates='collector', cascade='all')
 
     # 与follow表 关联
-    ## 当前用户关注正在关注的
-    following = db.relationship('Follow', back_populates='follower', cascade='all', lazy='dynamic', foreign_keys=[Follow.follower_id])
+    ## 当前用户关注正在关注哪些人
+    following = db.relationship('Follow', back_populates='follower', cascade='all', lazy='dynamic', foreign_keys=[Follow. follower_id])
     ## 当前用户的关注者
-    followers = db.relationship('Follow', back_populates='followed', cascade='all', lazy='dynamic', foreign_keys=[Follow.followed_id])
+    followers = db.relationship('Follow', back_populates='followed', cascade='all', lazy='dynamic', foreign_keys=[Follow. followed_id])
 
     # User初始化, 注册一个用户, 马上给一个权限, 只区分 一般用户 与 大管理员
     def __init__(self, **kwargs):

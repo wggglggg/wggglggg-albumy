@@ -1,4 +1,12 @@
 $(function () {
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader('X-CSRFToken', csrf_token);
+            }
+        }
+    });
+
 
     // hide or show tag edit form
     $('#tag-btn').click(function () {
@@ -73,11 +81,11 @@ $(function () {
                 if (!$('.popover:hover').length) {
                     $el.popover('hide');
                 }
-            }, 200);
+            }, 100);
         }
     }
 
-    $('.profile-popover').hover(show_profile_popover.bind(this), hide_profile_popover.bind(this));
+
 
     var flash = null;
     function toast(body) {
@@ -87,6 +95,77 @@ $(function () {
         flash = setTimeout(function () {
             $toast.fadeOut();
         }, 3000)
+    }
+
+    function update_followers_count(id) {
+        var $el = $('#followers-count-' + id);
+        $.ajax({
+            type: 'GET',
+            url: $el.data('href'),
+            success: function (data) {
+                $el.text(data.count);     //更新数字
+            },
+            error: function(error) {
+                toast('Server error, please try again later.');
+            }
+        });
+    }
+
+    function follow(e) {
+        var $el = $(e.target);
+        var id = $el.data('id');
+
+        $.ajax({
+           type: 'POST',
+           url: $el.data('href'),
+           success: function (data) {
+              $el.prev().show();
+              $el.hide();
+              update_followers_count(id);
+              toast(data.message);
+           },
+            error: function (error) {
+               toast('Server error, please try again later.');
+            }
+        });
+    }
+
+    function unfollow(e) {
+        var $el = $(e.target);
+        var id = $el.data('id');
+
+        $.ajax({
+            type: 'POST',
+            url: $el.data('href'),
+            success: function (data) {
+                $el.next().show();
+                $el.hide();
+                update_followers_count(id);
+                toast(data.message);
+            },
+            error: function (error) {
+                toast('Server error, please try again later.');
+            }
+        });
+    }
+
+
+    $('.profile-popover').hover(show_profile_popover.bind(this), hide_profile_popover.bind(this));
+    $(document).on('click', '.follow-btn', follow.bind(this));
+    $(document).on('click', '.unfollow-btn', unfollow.bind(this));
+
+    function update_followers_count(id) {
+        var $el = $('#followers-count-' + id);
+        $.ajax({
+            type: 'GET',
+            url: $el.data('href'),
+            success: function (data) {
+              $el.text(data.count);
+            },
+            error: function (error) {
+                toast('Server error, please try again later.');
+            }
+        });
     }
 
 });
