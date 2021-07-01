@@ -3,6 +3,7 @@ from app.models import User, Photo, Collect, Follow
 from flask_login import current_user, login_required
 from app.utils import redirect_back
 from app.decorators import confirm_required, permission_required
+from app.notifications import push_follow_notification
 
 user_bp = Blueprint('user', __name__)
 
@@ -44,6 +45,7 @@ def follow(username):
 
     current_user.follow(user)                                                   # 如果没关注, 就关注对方
     flash('关注 %s 成功' % username)
+    push_follow_notification(follower=current_user, receiver=user)
     return redirect_back()                                                      # 关注完刷回以前的页面
 
 # 取消关注

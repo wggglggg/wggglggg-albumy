@@ -56,6 +56,8 @@ class BaseConfig(object):
     ALBUMY_COMMENT_PER_PAGE = 10
     # 收藏者分布配置
     ALBUMY_USER_PER_PAGE = 5
+    # 个人消息中心配置
+    ALBUMY_NOTIFICATION_PER_PAGE = 15
 
 
 # 开发环境配置, 继承于基本配置, 单独添加了数据库存放地址

@@ -57,6 +57,9 @@ class User(db.Model, UserMixin):
     ## 当前用户的关注者
     followers = db.relationship('Follow', back_populates='followed', cascade='all', lazy='dynamic', foreign_keys=[Follow. followed_id])
 
+    # 与 notification表 关联
+    notifications = db.relationship('Notification', back_populates='receiver', cascade='all')
+
     # User初始化, 注册一个用户, 马上给一个权限, 只区分 一般用户 与 大管理员
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -284,3 +287,13 @@ class Collect(db.Model):
     collector = db.relationship('User', back_populates='collections', lazy=False)
     collected = db.relationship('Photo', back_populates='collectors', lazy=False)
 
+# 提醒消息模型
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    message = db.Column(db.Text, nullable=False)
+    is_read = db.Column(db.Boolean, default=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    # User 外键
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    receiver = db.relationship('User', back_populates='notifications')

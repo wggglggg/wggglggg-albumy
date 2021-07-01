@@ -8,8 +8,10 @@ from app.bluepoints.auth import auth_bp
 from app.bluepoints.ajax import ajax_bp
 from app.extentions import bootstrap, db, login_manager, mail, moment, ckeditor,  migrate, dropzone, csrf, avatars
 from config import config
-from app.models import User, Role, Permission, Photo, Tag
+from app.models import User, Role, Permission, Photo, Tag, Notification
+from flask_login import current_user
 import os, click
+
 
 #app创建工厂, 所有要与app相挂钩的第三方都汇集到这里
 def create_app(config_name=None):
@@ -64,7 +66,16 @@ def register_shell_context(app):
 
 # 模板上下文处理器, 模板初始化时预先拿到的数据放这里
 def register_template_context(app):
-    pass
+    @app.context_processor
+    def make_template_context():
+        if current_user.is_authenticated:
+            notification_count = Notification.query.with_parent(current_user).filter_by(is_read=False).count()
+            print('current_user-1', current_user, notification_count)
+        else:
+            notification_count = None
+            print('current_user-2', current_user, notification_count)
+
+        return dict(notification_count=notification_count)
 
 # errors处理器, 报错的页面放在这
 def register_errorhandlers(app):
@@ -123,8 +134,9 @@ def register_commans(app):
     @click.option('--tag', default=20, help='生成虚拟标签 默认20个')
     @click.option('--pic', default=120, help='生成虚拟图片, 默认120张')
     @click.option('--comment', default=500, help='生成虚拟评论, 默认100条')
-    def forge(user,pic,tag, comment):                                 # user参数是生成的个数默认是10
-        from app.fakes import fake_admin, fake_user, fake_pic, fake_tag, fake_comment # 调用管理员与用户生成函数
+    @click.option('--collect', default=50, help='生成虚拟收藏, 默认50个收藏')
+    def forge(user, pic, tag, comment, collect):                                 # user参数是生成的个数默认是10
+        from app.fakes import fake_admin, fake_user, fake_pic, fake_tag, fake_comment, fake_collect # 调用管理员与用户生成函数
         db.drop_all()
         db.create_all()
         click.echo('初始化权限和角色')
@@ -139,7 +151,10 @@ def register_commans(app):
         fake_pic(pic)
         click.echo('生成 %d 评论' % comment)
         fake_comment(comment)
+        click.echo('生成收藏')
+        fake_collect(collect)
         click.echo('生成虚拟数据结束')
+
 
     @app.cli.command()
     def pic():

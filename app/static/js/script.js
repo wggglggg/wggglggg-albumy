@@ -1,4 +1,6 @@
 $(function () {
+    var default_error_message = 'Server error, please, try again later.';
+
     $.ajaxSetup({
         beforeSend: function (xhr, settings) {
             if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
@@ -6,6 +8,29 @@ $(function () {
             }
         }
     });
+
+    $(document).ajaxError(function (event, request, settings) {
+        var message = null;
+        if (request.responseJSON && request.responseJSON.hasOwnProperty('message')) {
+            message = request.responseJSON.message;
+        } else if (request.responseText) {
+            var IS_JSON = true;
+            try{
+                var data = JSON.parse(request.responseText);
+            }
+            catch(err) {
+                IS_JSON = false;
+            }
+            if (IS_JSON && data !== undefined && data.hasOwnProperty('message')) {
+                message = JSON.parse(request.responseText).message;
+            } else {
+                message = default_error_message;
+            }
+        } else {
+            message = default_error_message;
+        }
+        toast(message, 'error');
+        });
 
 
     // hide or show tag edit form
@@ -34,6 +59,10 @@ $(function () {
     $("[data-toggle='tooltip']").tooltip({title: moment($(this).data('timestamp')).format('lll')
     });
 
+    if (is_authenticated) {
+        setInterval(update_notification_count, 30000);
+    }
+
 
     var hover_timer = null;
 
@@ -61,9 +90,6 @@ $(function () {
                             // $el.popover('dispose');
                         }, 200);
                     });
-                },
-                error: function (error) {
-                    toast('Server error, please try again later.')
                 }
             });
         }, 500)
@@ -81,16 +107,21 @@ $(function () {
                 if (!$('.popover:hover').length) {
                     $el.popover('hide');
                 }
-            }, 100);
+            }, 200);
         }
     }
 
 
 
     var flash = null;
-    function toast(body) {
+    function toast(body, category) {
         clearTimeout(flash);
         var $toast = $('#toast');
+        if (category === 'error') {
+            $toast.css('background-color', 'red')
+        } else {
+            $toast.css('background-color', '#333')
+        }
         $toast.text(body).fadeIn();
         flash = setTimeout(function () {
             $toast.fadeOut();
@@ -104,10 +135,10 @@ $(function () {
             url: $el.data('href'),
             success: function (data) {
                 $el.text(data.count);     //更新数字
-            },
-            error: function(error) {
-                toast('Server error, please try again later.');
             }
+        //     error: function(error) {
+        //         toast('Server error, please try again later.');
+        //     }
         });
     }
 
@@ -123,10 +154,10 @@ $(function () {
               $el.hide();
               update_followers_count(id);
               toast(data.message);
-           },
-            error: function (error) {
-               toast('Server error, please try again later.');
-            }
+           }
+            // error: function (error) {
+            //    toast('Server error, please try again later.');
+            // }
         });
     }
 
@@ -142,10 +173,10 @@ $(function () {
                 $el.hide();
                 update_followers_count(id);
                 toast(data.message);
-            },
-            error: function (error) {
-                toast('Server error, please try again later.');
             }
+            // error: function (error) {
+            //     toast('Server error, please try again later.');
+            // }
         });
     }
 
@@ -161,9 +192,25 @@ $(function () {
             url: $el.data('href'),
             success: function (data) {
               $el.text(data.count);
-            },
-            error: function (error) {
-                toast('Server error, please try again later.');
+            }
+            // error: function (error) {
+            //     toast(data.message);
+            // }
+        });
+    }
+
+    function update_notification_count() {
+        var $el = $('#notification_badge');
+        $.ajax({
+            type: 'GET',
+            url: $el.data('href'),
+            success: function (data) {
+                if (data.count == 0) {
+                    $('#notification_badge').hide();
+                } else {
+                    $el.show();
+                    $el.text(data.count)
+                }
             }
         });
     }

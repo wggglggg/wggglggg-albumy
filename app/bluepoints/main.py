@@ -2,10 +2,11 @@ from flask import Blueprint, render_template, url_for, request, current_app, sen
 from flask_login import login_required, current_user
 from app.decorators import permission_required, confirm_required
 from flask_dropzone import random_filename
-from app.models import Photo, Tag, Comment, Collect, User
+from app.models import Photo, Tag, Comment, Collect, User, Notification
 from app.extentions import db
 from app.utils import resize_image, flash_errors
 from app.forms.main import DescriptionForm, TagForm, CommentForm
+from app.notifications import push_comment_notification, push_collect_notification
 
 import os
 
@@ -68,7 +69,7 @@ def show_photo(photo_id):
     per_page = current_app.config['ALBUMY_COMMENT_PER_PAGE']
     pagination = Comment.query.with_parent(photo).order_by(Comment.timestamp.asc()).paginate(page, per_page=per_page)
     comments = pagination.items
-    print('pagination.pages::::', pagination.pages)
+
 
     tag_form = TagForm()
     comment_form = CommentForm()
@@ -226,10 +227,14 @@ def new_comment(photo_id):
         replied_id = request.args.get('reply')
         if replied_id:
             replied_comment = Comment.query.get_or_404(replied_id)
-            comment.replied = replied_comment
+            comment.replied = replied_comment   # 给被评论的人发提醒消息
+            push_comment_notification(photo_id=photo_id, receiver=comment.replied.author)
         db.session.add(comment)
         db.session.commit()
+        flash('评论成功', 'success')
 
+        if current_user != photo.author:      #   给照片发布人提醒消息
+            push_comment_notification(photo_id=photo_id, receiver=photo.author, page=page)
     flash_errors(form)
     return redirect(url_for('main.show_photo', photo_id=photo_id, page=page))
 
@@ -295,6 +300,8 @@ def collect(photo_id):
 
     current_user.collect(photo)
     flash('图片已经收藏成功', 'success')
+    if current_user != photo.author:
+        push_collect_notification(photo_id=photo_id, receiver=photo.author, collector=current_user)
     return redirect(url_for('main.show_photo', photo_id=photo_id))
 
 # 图片取消收藏
@@ -320,3 +327,43 @@ def show_collectors(photo_id):
     collects = pagination.items
     return render_template('main/collectors.html', photo=photo, pagination=pagination, collects=collects)
 
+# 提醒中心
+@main_bp.route('/show_notifications')
+@login_required
+def show_notifications():
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['ALBUMY_NOTIFICATION_PER_PAGE']
+    notifications = Notification.query.with_parent(current_user)                        # 拿到与用户相关的所有消息
+
+    filter_rule = request.args.get('filter')
+    if filter_rule == 'unread':
+        notifications = notifications.filter_by(is_read=False)                          # 先与用户相关的所有未读提醒
+
+    pagination = notifications.order_by(Notification.timestamp.desc()).paginate(page, per_page=per_page)
+    notifications = pagination.items
+    return render_template('main/show_notifications.html', pagination=pagination, notifications=notifications)
+
+# 一次性将所有未读改为已读
+@main_bp.route('/read_all_notification', methods=["POST"])
+@login_required
+def read_all_notification():
+    for notification in current_user.notifications:
+        notification.is_read = True
+
+    db.session.commit()
+    flash('所有未读已改为已读', 'success')
+    return redirect(url_for('main.show_notifications'))
+
+# 阅读一条未读信息
+@main_bp.route('/read_notification/<int:notification_id>', methods=['POST'])
+@login_required
+def read_notification(notification_id):
+    notification = Notification.query.get_or_404(notification_id)
+
+    if current_user != notification.receiver:
+        abort(403)
+
+    notification.is_read = True
+    db.session.commit()
+    flash('信息已经转成已读', 'success')
+    return redirect(url_for('main.show_notifications'))
