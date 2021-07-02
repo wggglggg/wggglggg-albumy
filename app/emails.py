@@ -30,6 +30,9 @@ def send_confirm_email(user, token, to=None):
 def send_reset_password_email(user, token):
     send_mail(subject='Password Reset', user=user, token=token, template='emails/reset_password', to=user.email)
 
+# 更换邮箱发送确认邮件
+def send_change_email_email(user, token, to=None):
+    send_mail(subject='Change Email', user=user, token=token, template='emails/change_confirm_email', to=to or user.email)
 
 
 

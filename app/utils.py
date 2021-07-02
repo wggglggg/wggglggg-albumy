@@ -4,6 +4,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, Signatur
 from config import Operations
 from app.extentions import db
 from PIL import Image
+from app.models import User
 import PIL, os
 
 # 校验拿到的target(实际就是next)是否安全,
@@ -28,7 +29,7 @@ def generate_token(user, operation, expires_in=None, **kwargs):    # opeation
     s = Serializer(current_app.config['SECRET_KEY'], expires_in)   # 将SECRET_KEY+有效时间  =  序列token一部分
     data = {'id': user.id, 'operation': operation}
     data.update(**kwargs)                                           # 预留了参数位置
-    print('s.dumps(data)-------------',s.dumps(data))
+
     return s.dumps(data)                                            # 将字典揉进s序列数里面形成完成的 token
 
 # 将token反解校验
@@ -44,13 +45,27 @@ def validate_token(user, operation, token, new_password=None):
     if operation != data.get('operation') or user.id != data.get('id'):
         return False
 
-    if operation == Operations.CONFIRM:                  # 如果是注册验证过了,  改confirmed改为True
+    if operation == Operations.CONFIRM:
+        print('operatiion', operation)
+        # 如果是注册验证过了,  改confirmed改为True
         user.confirmed = True
 
     elif operation == Operations.RESET_PASSWORD:
+
         user.set_password(new_password)
 
+    elif operation == Operations.CHANGE_EMAIL:
+        new_email = data.get('new_email')
+        print('new_email', new_email)
+        if new_email is None:
+            return False
+        if User.query.filter_by(email=new_email).first() is not None:
+            return False
+        user.email = new_email
+
     else:
+        print('走的False')
+
         return False
 
     db.session.commit()

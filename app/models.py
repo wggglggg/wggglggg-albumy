@@ -297,3 +297,4 @@ class Notification(db.Model):
     # User 外键
     receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     receiver = db.relationship('User', back_populates='notifications')
+

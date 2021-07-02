@@ -74,7 +74,7 @@ def confirm(token):
         return redirect(url_for('main.index'))
     else:
         flash('token无效或者过期,请重新发确认链接', 'warning')
-        return redirect(url_for('auth.resend_confirmation'))
+        return redirect(url_for('auth.resend_confirm_email'))
 
 # 重新发送确认邮件
 @auth_bp.route('/resend_confirm_email')
