@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, PasswordField
+from wtforms import StringField, TextAreaField, SubmitField, PasswordField, FileField, HiddenField
 from wtforms.validators import DataRequired, Length, Regexp, Optional, ValidationError, EqualTo, Email
+from flask_wtf.file import FileRequired, FileAllowed
 
 from flask_login import current_user
 from app.models import User
@@ -32,3 +33,16 @@ class ChangePasswordForm(FlaskForm):
 class ChangeEmailForm(FlaskForm):
     email = StringField('New Email', validators=[DataRequired(), Length(1,254), Email()])
     submit = SubmitField('提交')
+
+# avatar头像上传表单
+class UploadAvatarForm(FlaskForm):
+    image = FileField('Upload <= 5M', validators=[FileRequired(), FileAllowed(['jpg', 'png'], '上传类型jpg and png')])
+    submit = SubmitField()
+
+# avatar头像图片裁切表单
+class CropAvatarForm(FlaskForm):
+    x = HiddenField()       # x点
+    y = HiddenField()       # y点
+    w = HiddenField()       # 宽度
+    h = HiddenField()       # 高度
+    submit = SubmitField('裁切并上传')

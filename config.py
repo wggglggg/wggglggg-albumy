@@ -49,7 +49,7 @@ class BaseConfig(object):
     ALBUMY_PHOTO_PER_PAGE = 12
 
     # avatars头像保存配置
-    AVATARS_SAVE_PATH = os.path.join(ALBUMY_UPLOAD_PATH, 'get_avatar')
+    AVATARS_SAVE_PATH = os.path.join(ALBUMY_UPLOAD_PATH, 'get_avatar') # 'get_avatar'是upload下面的文件夹存放头像
     AVATARS_SIZE_TUPLE = (30, 100, 200)
 
     # 照片评论配置

@@ -1,11 +1,11 @@
 from flask import Blueprint, render_template,redirect,url_for,request, current_app, flash
 from app.models import User, Photo, Collect, Follow
 from flask_login import current_user, login_required, fresh_login_required
-from app.utils import redirect_back
+from app.utils import redirect_back, flash_errors
 from app.decorators import confirm_required, permission_required
 from app.notifications import push_follow_notification
-from app.forms.user import EditProfileForm, ChangePasswordForm, ChangeEmailForm
-from app.extentions import db
+from app.forms.user import EditProfileForm, ChangePasswordForm, ChangeEmailForm, UploadAvatarForm, CropAvatarForm
+from app.extentions import db, avatars
 from app.utils import generate_token, validate_token
 from app.emails import send_confirm_email,send_change_email_email
 from config import Operations
@@ -108,10 +108,6 @@ def edit_profile():
     form.bio.data = current_user.bio
     return render_template('user/settings/edit_profile.html', form=form)
 
-# 更改头像
-@user_bp.route('/change_avatar')
-def change_avatar():
-    pass
 
 # 更换密码
 @user_bp.route('/change_password', methods=['GET', 'POST'])
@@ -124,7 +120,7 @@ def change_password():
         return redirect(url_for('user.index', username=current_user.username))
     return render_template('user/settings/change_password.html', form=form)
 
-# 更换邮箱发送邮件
+# 更换邮箱发送确认邮件
 @user_bp.route('/change_email_request', methods=['GET', 'POST'])
 @fresh_login_required
 def change_email_request():
@@ -147,6 +143,50 @@ def change_email(token):
     else:
         flash('过期或者无效token', 'warning')
         return redirect(url_for('user.change_email_request'))
+
+# 更改头像
+@user_bp.route('/change_avatar')
+@login_required
+@confirm_required
+def change_avatar():
+    upload_form = UploadAvatarForm()
+    crop_form = CropAvatarForm()
+    return render_template('user/settings/change_avatar.html', upload_form=upload_form, crop_form=crop_form)
+
+# 上传头像
+@user_bp.route('/upload_avatar', methods=['POST'])
+@login_required
+@confirm_required
+def upload_avatar():
+    form = UploadAvatarForm()
+    if form.validate_on_submit():
+        image = form.image.data
+        filename = avatars.save_avatar(image=image)
+        current_user.avatar_raw = filename
+        db.session.commit()
+        flash('头像已经上传,还需要用户在下面裁切尺寸', 'success')
+    flash_errors(form)
+    return redirect(url_for('user.change_avatar'))
+
+# 裁切avatar
+@user_bp.route('/crop_avatar', methods=['POST'])
+@login_required
+@confirm_required
+def crop_avatar():
+    form = CropAvatarForm()
+    if form.validate_on_submit():
+        x = form.x.data
+        y = form.y.data
+        w = form.w.data
+        h = form.h.data
+        filename = avatars.crop_avatar(filename=current_user.avatar_raw, x=x, y=y, w=w, h=h)
+        current_user.avatars_s = filename[0]
+        current_user.avatars_m = filename[1]
+        current_user.avatars_l = filename[2]
+        db.session.commit()
+
+    flash_errors(form)
+    return redirect(url_for('user.change_avatar'))
 
 # 注销账号
 @user_bp.route('/delete_account')

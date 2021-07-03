@@ -38,6 +38,8 @@ class User(db.Model, UserMixin):
     avatars_m = db.Column(db.String(64))
     avatars_l = db.Column(db.String(64))
 
+    avatar_raw = db.Column(db.String(64))          # 储存用户上传头像原生文件名
+
     # 与 Role表关联
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     role = db.relationship('Role', back_populates='users')
