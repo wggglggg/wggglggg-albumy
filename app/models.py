@@ -40,6 +40,14 @@ class User(db.Model, UserMixin):
 
     avatar_raw = db.Column(db.String(64))          # 储存用户上传头像原生文件名
 
+    # notification_setting用户设置中心
+    receive_comment_notification = db.Column(db.Boolean, default=True)
+    receive_follow_notification = db.Column(db.Boolean, default=True)
+    receive_collect_notification = db.Column(db.Boolean, default=True)
+
+    # 个人数据隐私
+    show_collections = db.Column(db.Boolean, default=True)
+
     # 与 Role表关联
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     role = db.relationship('Role', back_populates='users')

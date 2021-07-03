@@ -43,7 +43,8 @@ def follow(username):
         return jsonify(message='无法重复关注'), 400
 
     current_user.follow(user)
-    if current_user.is_authenticated:
+
+    if user.receive_follow_notification:
         push_follow_notification(follower=current_user, receiver=user)
     return jsonify(message='关注成功')
 

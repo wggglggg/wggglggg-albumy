@@ -4,7 +4,7 @@ from flask_login import current_user, login_required, fresh_login_required
 from app.utils import redirect_back, flash_errors
 from app.decorators import confirm_required, permission_required
 from app.notifications import push_follow_notification
-from app.forms.user import EditProfileForm, ChangePasswordForm, ChangeEmailForm, UploadAvatarForm, CropAvatarForm
+from app.forms.user import EditProfileForm, ChangePasswordForm, ChangeEmailForm, UploadAvatarForm, CropAvatarForm, NotificationSettingForm, PrivacySettingForm
 from app.extentions import db, avatars
 from app.utils import generate_token, validate_token
 from app.emails import send_confirm_email,send_change_email_email
@@ -50,7 +50,9 @@ def follow(username):
 
     current_user.follow(user)                                                   # 如果没关注, 就关注对方
     flash('关注 %s 成功' % username)
-    push_follow_notification(follower=current_user, receiver=user)
+
+    if user.receive_follow_notification:
+        push_follow_notification(follower=current_user, receiver=user)
     return redirect_back()                                                      # 关注完刷回以前的页面
 
 # 取消关注
@@ -192,3 +194,37 @@ def crop_avatar():
 @user_bp.route('/delete_account')
 def delete_account():
     pass
+
+# 消息提醒中心状态设置
+@user_bp.route('/edit_notification', methods=['GET', 'POST'])
+@login_required
+def edit_notification():
+    form = NotificationSettingForm()
+    if form.validate_on_submit():
+        current_user.receive_comment_notification = form.receive_comment_notification.data
+        current_user.receive_follow_notification = form.receive_follow_notification.data
+        current_user.receive_collect_notification = form.receive_collect_notification.data
+        db.session.commit()
+        flash('信息提醒设置完毕', 'success')
+        return redirect(url_for('user.index', username=current_user.username))
+
+    form.receive_comment_notification.data = current_user.receive_comment_notification
+    form.receive_follow_notification.data = current_user.receive_follow_notification
+    form.receive_collect_notification.data = current_user.receive_collect_notification
+    return render_template('user/settings/edit_notification.html', form=form)
+
+# 个人收藏隐私状态设置
+@user_bp.route('/privacy_setting', methods=['GET', 'POST'])
+def privacy_setting():
+    form = PrivacySettingForm()
+    if form.validate_on_submit():
+        current_user.show_collections = form.public_collections.data
+        db.session.commit()
+        if current_user.show_collections:
+            flash('收藏展示开启', 'success')
+        else:
+            flash('收藏展示关闭')
+        return redirect(url_for('user.index', username=current_user.username))
+
+    form.public_collections.data = current_user.show_collections
+    return render_template('user/settings/privacy_setting.html', form=form)

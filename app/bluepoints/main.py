@@ -228,12 +228,18 @@ def new_comment(photo_id):
         if replied_id:
             replied_comment = Comment.query.get_or_404(replied_id)
             comment.replied = replied_comment   # 给被评论的人发提醒消息
-            push_comment_notification(photo_id=photo_id, receiver=comment.replied.author)
+            user = comment.replied.author
+
+            if user.receive_comment_notification:
+                push_comment_notification(photo_id=photo_id, receiver=comment.replied.author)
+
         db.session.add(comment)
         db.session.commit()
         flash('评论成功', 'success')
 
-        if current_user != photo.author:      #   给照片发布人提醒消息
+        # 给照片发布人提醒消息
+        user = photo.author
+        if current_user != photo.author and user.receive_comment_notification:
             push_comment_notification(photo_id=photo_id, receiver=photo.author, page=page)
     flash_errors(form)
     return redirect(url_for('main.show_photo', photo_id=photo_id, page=page))
@@ -300,8 +306,11 @@ def collect(photo_id):
 
     current_user.collect(photo)
     flash('图片已经收藏成功', 'success')
-    if current_user != photo.author:
+    user = photo.author
+
+    if current_user != photo.author and user.receive_collect_notification:
         push_collect_notification(photo_id=photo_id, receiver=photo.author, collector=current_user)
+
     return redirect(url_for('main.show_photo', photo_id=photo_id))
 
 # 图片取消收藏

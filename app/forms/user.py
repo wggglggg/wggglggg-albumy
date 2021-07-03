@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, PasswordField, FileField, HiddenField
+from wtforms import StringField, TextAreaField, SubmitField, PasswordField, FileField, HiddenField, BooleanField
 from wtforms.validators import DataRequired, Length, Regexp, Optional, ValidationError, EqualTo, Email
 from flask_wtf.file import FileRequired, FileAllowed
 
@@ -46,3 +46,15 @@ class CropAvatarForm(FlaskForm):
     w = HiddenField()       # 宽度
     h = HiddenField()       # 高度
     submit = SubmitField('裁切并上传')
+
+# notification提醒开关表单
+class NotificationSettingForm(FlaskForm):
+    receive_comment_notification = BooleanField('新回复提醒')
+    receive_follow_notification = BooleanField('新关注提醒')
+    receive_collect_notification = BooleanField('新收藏提醒')
+    submit = SubmitField()
+
+# 个人收藏隐私设置
+class PrivacySettingForm(FlaskForm):
+    public_collections = BooleanField('公开收藏')
+    submit = SubmitField()
