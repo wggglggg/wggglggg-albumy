@@ -154,6 +154,8 @@ class User(db.Model, UserMixin):
             db.session.delete(follow)
             db.session.commit()
 
+
+
 # 每个角色有多个权限 , 每个权限也有多个角色,所以要关联表
 roles_permissions = db.Table('roles_permissions',
                              db.Column('role_id', db.Integer, db.ForeignKey('role.id')),
@@ -268,16 +270,6 @@ class Comment(db.Model):
     replied = db.relationship('Comment', back_populates='replies', remote_side=[id]) # 表中的id用的自身的id,写在旧的一发
 
 
-# 图片删除监听函数, 如果ater_delete Photo事情发生, 会被 listens_for捕获
-@db.event.listens_for(Photo, 'after_delete', named=True)
-def delete_photos(**kwargs):
-    target = kwargs['target']   # 我猜target是photo那一行数据
-    for filename in [target.filename, target.filename_s, target.filename_m]:
-        if filename is not None:  # 如果尺寸小于800, 那么filename_m和filename存在数据为中是一个文件地址
-            path = os.path.join(current_app.config['ALBUMY_UPLOAD_PATH'], filename)
-            if os.path.exists(path): # 小尺寸的图片, s和m或许和原尺寸是同一个路径,原尺寸删除后, 可以用exists校验s m的文件是否还存在
-                db.remove(path)
-
 # 图片标签
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -308,3 +300,22 @@ class Notification(db.Model):
     receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     receiver = db.relationship('User', back_populates='notifications')
 
+# 图片删除监听函数, 如果ater_delete Photo事情发生, 会被 listens_for捕获
+@db.event.listens_for(Photo, 'after_delete', named=True)
+def delete_photos(**kwargs):
+    target = kwargs['target']   # 我猜target是photo那一行数据
+    for filename in [target.filename, target.filename_s, target.filename_m]:
+        if filename is not None:  # 如果尺寸小于800, 那么filename_m和filename存在数据为中是一个文件地址
+            path = os.path.join(current_app.config['ALBUMY_UPLOAD_PATH'], filename)
+            if os.path.exists(path): # 小尺寸的图片, s和m或许和原尺寸是同一个路径,原尺寸删除后, 可以用exists校验s m的文件是否还存在
+                os.remove(path)
+
+# 监听函数, 如果监听到删除了用户, 就自动删除用户的头像文件
+@db.event.listens_for(User, 'after_delete', named=True)
+def delete_avatars(**kwargs):
+    target = kwargs['target']
+    for filename in [target.avatars_s,  target.avatars_m, target.avatars_l, target.avatar_raw]:
+        if filename is not None:
+            path = os.path.join(current_app.config['AVATARS_SAVE_PATH'], filename)
+            if os.path.exists(path):
+                os.remove(path)

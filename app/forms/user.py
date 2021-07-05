@@ -58,3 +58,12 @@ class NotificationSettingForm(FlaskForm):
 class PrivacySettingForm(FlaskForm):
     public_collections = BooleanField('公开收藏')
     submit = SubmitField()
+
+# 删除账户表单
+class DeleteAccountForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(1, 20)])
+    submit = SubmitField()
+
+    def validate_username(self, field):
+        if current_user.username != field.data:
+            return ValidationError('用户名不对')

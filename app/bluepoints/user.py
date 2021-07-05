@@ -4,7 +4,7 @@ from flask_login import current_user, login_required, fresh_login_required
 from app.utils import redirect_back, flash_errors
 from app.decorators import confirm_required, permission_required
 from app.notifications import push_follow_notification
-from app.forms.user import EditProfileForm, ChangePasswordForm, ChangeEmailForm, UploadAvatarForm, CropAvatarForm, NotificationSettingForm, PrivacySettingForm
+from app.forms.user import EditProfileForm, ChangePasswordForm, ChangeEmailForm, UploadAvatarForm, CropAvatarForm, NotificationSettingForm, PrivacySettingForm, DeleteAccountForm
 from app.extentions import db, avatars
 from app.utils import generate_token, validate_token
 from app.emails import send_confirm_email,send_change_email_email
@@ -190,10 +190,6 @@ def crop_avatar():
     flash_errors(form)
     return redirect(url_for('user.change_avatar'))
 
-# 注销账号
-@user_bp.route('/delete_account')
-def delete_account():
-    pass
 
 # 消息提醒中心状态设置
 @user_bp.route('/edit_notification', methods=['GET', 'POST'])
@@ -215,6 +211,7 @@ def edit_notification():
 
 # 个人收藏隐私状态设置
 @user_bp.route('/privacy_setting', methods=['GET', 'POST'])
+@login_required
 def privacy_setting():
     form = PrivacySettingForm()
     if form.validate_on_submit():
@@ -228,3 +225,17 @@ def privacy_setting():
 
     form.public_collections.data = current_user.show_collections
     return render_template('user/settings/privacy_setting.html', form=form)
+
+
+# 注销账号
+@user_bp.route('/delete_account', methods=['GET', 'POST'])
+@fresh_login_required
+def delete_account():
+    form = DeleteAccountForm()
+    if form.validate_on_submit():
+        db.session.delete(current_user._get_current_object())
+        db.session.commit()
+        flash('账户已经注销')
+        return redirect(url_for('main.index'))
+
+    return render_template('user/settings/delete_account.html', form=form)
