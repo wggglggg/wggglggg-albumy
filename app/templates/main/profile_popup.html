@@ -1,5 +1,3 @@
-{% from 'macros.html' import follow_area with context %}
-
 <div class="popup-card">
     <img class="rounded img-fluid avatar-s popup-avatar" src="{{ url_for('main.get_avatar', filename=user.avatars_m) }}">
     <div class="popup-profile">
@@ -20,11 +18,13 @@
         <a href="{{ url_for('user.index', username=user.username) }}">
             <strong>{{ user.photos | length }}</strong> Photos
         </a>
-        <a href="{{ url_for('user.show_followers', username=user.usrename) }}"><b id="followers-count-{{ user.id }}" data-href="{{ url_for('ajax.followers_count', user_id=user.id) }}">{{ user.followers.count() - 1 }}</b>Followers</a>
+        <a href="{{ url_for('user.show_followers', username=user.username) }}">
+            <b id="followers-count-{{ user.id }}" data-href="{{ url_for('ajax.followers_count', user_id=user.id) }}">
+                {{ user.followers.count() - 1 }}</b>Followers
+        </a>
     </p>
     <a href="{{ url_for('user.index', username=user.username) }}" class="btn btn-light btn-sm">
-        Homepage
-    </a>
+        Homepage</a>
     {% if current_user.is_authenticated %}
         {% if current_user != user %}
             <button data-id="{{ user.id }}"
