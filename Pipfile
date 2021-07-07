@@ -20,6 +20,7 @@ pillow = "*"
 flask-dropzone = "*"
 flask-avatars = "*"
 bootstrap-flask = "==1.04"
+flask-whooshee = "*"
 
 [dev-packages]
 

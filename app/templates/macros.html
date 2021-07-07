@@ -2,7 +2,7 @@
 {% macro photo_card(photo) %}
 <div class="photo-card card">
     <a class="card-thumbnail" href="{{ url_for('main.show_photo', photo_id=photo.id) }}">
-        <img class="card-img-top portrait" src="{{ url_for('main.get_image', filename=photo.filename_s) }}" alt="">
+        <img class="card-img-top portrait" src="{{ url_for('main.get_image', filename=photo.filename_s) }}">
     </a>
     <div class="card-body">
         <span class="oi oi-comment-square"></span>{{ photo.comments | length}} {# 评论条数 #}
@@ -53,3 +53,43 @@
         </form>
     {% endif %}
 {% endmacro %}
+
+{# comment 评论 #}
+{% macro comment_card(comment) %}
+<div class="comment">
+    <div class="comment-thumbnail">
+        <a href="{{ url_for('user.index', username=comment.author.username) }}">
+            <img class="img-fluid rounded avatar-s profile-popover" data-href="{{ url_for('ajax.get_profile', user_id=comment.author.id) }}" src="{{ url_for('main.get_avatar', filename=comment.author.avatars_s) }}">
+        </a>
+    </div>
+    <div class="comment-body">
+        <h6>
+            <a class="profile-popover"
+               data-href="{{ url_for('ajax.get_profile', user_id=comment.author.id) }}"
+               href="{{ url_for('user.index', username=comment.author.username) }}">
+                {{ comment.author.name }}
+            </a>
+            <small data-toggle="tooltip" data-placement="top" data-timestamp="{{ comment.timestamp }}" data-delay="500">
+                        {{ moment(comment.timestamp).format('LL') }}
+            </small>
+        </h6>
+        <div class="list-group">
+            <a class="list-group-item" href="{{ url_for('main.show_photo', photo_id=comment.photo_id) }}#comment">{{ comment.body }}</a>
+        </div>
+
+</div>
+{% endmacro %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

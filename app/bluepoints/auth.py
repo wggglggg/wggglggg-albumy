@@ -22,9 +22,12 @@ def login():
         remember_me = form.remember.data
         user = User.query.filter_by(email=email).first()
         if user and user.validate_password(password):
-            login_user(user, remember_me)
-            flash(',登录成功,欢迎回来!!!')
-            return redirect(url_for('main.index'))
+            if login_user(user, remember_me):
+                flash(',登录成功,欢迎回来!!!')
+                return redirect_back()
+            else:
+                flash('你被block封禁了', 'warning')
+                return redirect(url_for('main.index'))
 
         flash('邮箱地址或者密码错误', 'warning')
     return render_template('auth/login.html', form=form)

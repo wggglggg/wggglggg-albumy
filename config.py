@@ -59,6 +59,9 @@ class BaseConfig(object):
     # 个人消息中心配置
     ALBUMY_NOTIFICATION_PER_PAGE = 15
 
+    # 搜索search的配置
+    WHOOSHEE_MIN_STRING_LEN = 1
+    ALBUMY_SEARCH_RESULT_PER_PAGE = 20
 
 # 开发环境配置, 继承于基本配置, 单独添加了数据库存放地址
 class DevelopmentConfig(BaseConfig):

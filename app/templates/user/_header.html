@@ -21,6 +21,37 @@
             Joined {{ moment(user.member_since).format('LL') }}
         </p>
         <div>
+            {% if current_user != user %}
+                {% if current_user.can('MODERATE') %}
+                    {% if user.locked %}
+                        <form class="inline" action="{{ url_for('admin.unlock_user', user_id=user.id) }}" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="submit" class="btn btn-secondary btn-sm" value="Unlock">
+                        </form>
+                    {% else %}
+                        <form class="inline" action="{{ url_for('admin.lock_user', user_id=user.id) }}" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="submit" class="btn btn-primary btn-sm" value="Lock">
+                        </form>
+                    {% endif %}
+                    {% if user.active %}
+                        <form class="inline" action="{{ url_for('admin.block_user', user_id=user.id) }}" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="submit" class="btn btn-warning btn-sm" value="Block">
+                        </form>
+                    {% else %}
+                        <form class="inline" action="{{ url_for('admin.unblock_user', user_id=user.id) }}" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="submit" class="btn btn-secondary btn-sm" value="Unblock">
+                        </form>
+                    {% endif %}
+                    <a class="btn btn-light btn-sm" href="mailto: {{ user.email }}">Email</a>
+                {% endif %}
+{#                {% if current_user.is_admin %}#}
+{##}
+{#                {% endif %}#}
+            {% endif %}
+
             <div class="float-left">
                 <!--如果当前用户看别人的首页会显示follow或者unfollow-->
                 {{ follow_area(user) }}

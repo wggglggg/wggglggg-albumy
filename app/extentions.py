@@ -9,6 +9,7 @@ from flask_migrate import Migrate
 from flask_dropzone import Dropzone
 from flask_wtf.csrf import CSRFProtect
 from flask_avatars import Avatars
+from flask_whooshee import Whooshee
 
 
 
@@ -19,12 +20,13 @@ db = SQLAlchemy()
 ckeditor = CKEditor()
 mail = Mail()
 moment = Moment()
+# fake = Faker()
 fake = Faker('zh_CN')
 migrate = Migrate()
 dropzone = Dropzone()
 csrf = CSRFProtect()
 avatars = Avatars()
-
+whooshee = Whooshee()
 
 # 用户是否登陆, 要先写下面的代码从数据库里找用户, 看用户是否存在, 才可以使用is_authenticated
 @login_manager.user_loader

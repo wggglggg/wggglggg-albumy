@@ -6,7 +6,7 @@ from app.bluepoints.admin import admin_bp
 from app.bluepoints.user import user_bp
 from app.bluepoints.auth import auth_bp
 from app.bluepoints.ajax import ajax_bp
-from app.extentions import bootstrap, db, login_manager, mail, moment, ckeditor,  migrate, dropzone, csrf, avatars
+from app.extentions import bootstrap, db, login_manager, mail, moment, ckeditor,  migrate, dropzone, csrf, avatars, whooshee
 from config import config
 from app.models import User, Role, Permission, Photo, Tag, Notification
 from flask_login import current_user
@@ -57,6 +57,7 @@ def register_extentions(app):
     dropzone.init_app(app)
     csrf.init_app(app)
     avatars.init_app(app)
+    whooshee.init_app(app)
 
 # 每次在flask shell手动操作数据库, 要push上下文, 所以这里初始化上下文,省去一部分工作
 def register_shell_context(app):
@@ -137,8 +138,8 @@ def register_commans(app):
     @click.option('--collect', default=50, help='生成虚拟收藏, 默认50个收藏')
     def forge(user, pic, tag, comment, collect):                                 # user参数是生成的个数默认是10
         from app.fakes import fake_admin, fake_user, fake_pic, fake_tag, fake_comment, fake_collect # 调用管理员与用户生成函数
-        db.drop_all()
-        db.create_all()
+        # db.drop_all()
+        # db.create_all()
         click.echo('初始化权限和角色')
         Role.init_role()
         click.echo('生成管理员')

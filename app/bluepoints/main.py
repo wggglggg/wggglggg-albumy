@@ -4,7 +4,7 @@ from app.decorators import permission_required, confirm_required
 from flask_dropzone import random_filename
 from app.models import Photo, Tag, Comment, Collect, User, Notification, Follow
 from app.extentions import db
-from app.utils import resize_image, flash_errors
+from app.utils import resize_image, flash_errors, redirect_back
 from app.forms.main import DescriptionForm, TagForm, CommentForm
 from app.notifications import push_comment_notification, push_collect_notification
 from sqlalchemy.sql.expression import func
@@ -37,6 +37,29 @@ def index():
 def explore():
     photos = Photo.query.order_by(func.random()).limit(12)
     return render_template('main/explore.html', photos=photos)
+
+
+@main_bp.route('/search')
+def search():
+    q = request.args.get('q', '')
+    if q == '':
+        flash('请输入要搜索的关键字')
+        return redirect_back()
+
+    category = request.args.get('category', 'photo')
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['ALBUMY_SEARCH_RESULT_PER_PAGE']
+    if category == 'user':
+        pagination = User.query.whooshee_search(q).paginate(page, per_page=per_page)
+    elif category == 'comment':
+        pagination = Comment.query.whooshee_search(q).paginate(page, per_page=per_page)
+    elif category == 'tag':
+        pagination = Tag.query.whooshee_search(q).paginate(page, per_page=per_page)
+    else:
+        pagination = Photo.query.whooshee_search(q).paginate(page, per_page=per_page)
+
+    results = pagination.items
+    return render_template('main/search.html', q=q, category=category, pagination=pagination, results=results)
 
 @main_bp.route('/upload', methods=['GET','POST'])
 @login_required                                         # 验证是否登录

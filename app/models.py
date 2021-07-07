@@ -1,4 +1,4 @@
-from app.extentions import db
+from app.extentions import db, whooshee
 from flask_login import UserMixin, current_user
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -19,7 +19,7 @@ class Follow(db.Model):
     follower = db.relationship('User', back_populates='following', foreign_keys=[follower_id], lazy='joined')    # 关注者
     followed = db.relationship('User', back_populates='followers', foreign_keys=[followed_id], lazy='joined')    # 被关注者
 
-
+@whooshee.register_model('username', 'name')
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, index=True)        # 注册的用户名
@@ -47,6 +47,12 @@ class User(db.Model, UserMixin):
 
     # 个人数据隐私
     show_collections = db.Column(db.Boolean, default=True)
+
+    # 用户状态
+    locked = db.Column(db.Boolean, default=False)                   # false状态为默认, 表示不锁定
+    # 封禁与取消封禁
+    active = db.Column(db.Boolean, default=True)
+
 
     # 与 Role表关联
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
@@ -154,6 +160,29 @@ class User(db.Model, UserMixin):
             db.session.delete(follow)
             db.session.commit()
 
+    # 锁定与解除锁定函数
+    def lock(self):
+        self.locked = True
+        self.role = Role.query.filter_by(name='Locked').first()
+        db.session.commit()
+
+    def unlock(self):
+        self.locked = False
+        self.role = Role.query.filter_by(name='User').first()
+        db.session.commit()
+
+    # 封禁与解禁
+    @property
+    def is_active(self):
+        return self.active
+
+    def block(self):
+        self.active = False
+        db.session.commit()
+
+    def unblock(self):
+        self.active = True
+        db.session.commit()
 
 
 # 每个角色有多个权限 , 每个权限也有多个角色,所以要关联表
@@ -185,34 +214,25 @@ class Role(db.Model):
 
         # 将roles 和 permissions写入数据库
         for role_name in roles_permissions_map:
-
-            print('1:::::', role_name)
             role = Role.query.filter_by(name=role_name).first()
 
             if role is None:
-                print('2:::::', role)
 
                 role = Role(name=role_name)
-                print('3:::::', role)
 
                 db.session.add(role)
             role.permissions = []
 
             for permission_name in roles_permissions_map[role_name]:
-                print('4:::::', permission_name)
 
                 permission = Permission.query.filter_by(name=permission_name).first()
                 if permission is None:
-                    print('5:::::', permission)
 
                     permission = Permission(name=permission_name)
-                    print('6:::::', permission)
 
                     db.session.add(permission)
-                    print('7::::::', role.permissions)
 
                 role.permissions.append(permission)
-                print('8::::::', role.permissions)
 
         db.session.commit()
 
@@ -230,6 +250,7 @@ tagging = db.Table('tagging',
                    )
 
 # 上传照片表单
+@whooshee.register_model('description')
 class Photo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(500))                 # 照片描述
@@ -254,6 +275,7 @@ class Photo(db.Model):
     collectors = db.relationship('Collect', back_populates='collected', cascade='all')
 
 # # 评论表单, 与用户User, 与图片Photo 有联系
+@whooshee.register_model('body')
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
@@ -271,6 +293,7 @@ class Comment(db.Model):
 
 
 # 图片标签
+@whooshee.register_model('name')
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True, unique=True)
