@@ -145,7 +145,7 @@ def delete_photo(photo_id):
 
     photo = Photo.query.get_or_404(photo_id)
 
-    if current_user != photo.author:
+    if current_user != photo.author and not current_user.can('MODERATE'):
         abort(404)
     db.session.delete(photo)
     db.session.commit()
@@ -154,7 +154,7 @@ def delete_photo(photo_id):
     photo_n = Photo.query.with_parent(photo.author).filter(Photo.id > photo_id).order_by(Photo.id.asc()).first()
 
     if photo_n is None:
-        photo_p = Photo.query.with_parent(photo.author).filter(Photo.id < photo_id).orber_by(Photo.id.desc()).first()
+        photo_p = Photo.query.with_parent(photo.author).filter(Photo.id < photo_id).order_by(Photo.id.desc()).first()
 
         if photo_p is None:
             return redirect(url_for('user.index', username=photo.author.username))
@@ -313,7 +313,7 @@ def reply_comment(comment_id):
 @login_required
 def delete_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
-    if current_user != comment.author and current_user != comment.photo.author:
+    if current_user != comment.author and current_user != comment.photo.author and current_user.can('MODERATE'):
         abort(403)
 
     db.session.delete(comment)

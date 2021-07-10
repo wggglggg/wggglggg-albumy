@@ -14,9 +14,10 @@
         </div>
         <!---Share---->
         <a class="btn btn-primary btn-sm text-white"  data-toggle="modal" data-target="#share-Modal">Share</a>
-        {% if current_user == photo.author %}{# 如果当前用户 就是 照片的作者 #}
+        {% if current_user == photo.author or current_user.can('MODERATE')%}{# 如果当前用户 就是 照片的作者 #}
 
-            <a class="btn btn-danger btn-sm text-white" data-toggle="modal" data-target="#confirm-delete" data-href="{{ url_for('main.delete_photo', photo_id=photo.id) }}">Delete</a>{% endif %}
+            <a class="btn btn-danger btn-sm text-white" data-toggle="modal" data-target="#confirm-delete" data-href="{{ url_for('main.delete_photo', photo_id=photo.id) }}">Delete</a>
+        {% endif %}
         <p class="text-muted float-right small">
             <span class="oi oi-clock"></span>  Upload at {{ moment(photo.timestamp).format('LL') }}
         </p>
@@ -26,6 +27,7 @@
                 <button type="submit" class="btn btn-warning btn-sm">Report</button>
             </form>
         {% endif %}
+
         {% include 'main/_comment.html' %}
     </div>
     <div class="col-md-4">

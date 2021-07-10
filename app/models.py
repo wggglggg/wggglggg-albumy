@@ -323,6 +323,8 @@ class Notification(db.Model):
     receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     receiver = db.relationship('User', back_populates='notifications')
 
+
+
 # 图片删除监听函数, 如果ater_delete Photo事情发生, 会被 listens_for捕获
 @db.event.listens_for(Photo, 'after_delete', named=True)
 def delete_photos(**kwargs):

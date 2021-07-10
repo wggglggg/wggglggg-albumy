@@ -63,6 +63,12 @@ class BaseConfig(object):
     WHOOSHEE_MIN_STRING_LEN = 1
     ALBUMY_SEARCH_RESULT_PER_PAGE = 20
 
+    # Dashboard后台manage页面
+    ALBUMY_MANAGE_PHOTO_PER_PAGE = 12
+    ALBUMY_MANAGE_TAG_PER_PAGE = 30
+    ALBUMY_MANAGE_USER_PER_PAGE = 20
+    ALBUMY_MANAGE_COMMENT_PER_PAGE = 15
+
 # 开发环境配置, 继承于基本配置, 单独添加了数据库存放地址
 class DevelopmentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir , 'albumy-dev.db')
