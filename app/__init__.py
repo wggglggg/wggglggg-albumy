@@ -138,8 +138,8 @@ def register_commans(app):
     @click.option('--collect', default=50, help='生成虚拟收藏, 默认50个收藏')
     def forge(user, pic, tag, comment, collect):                                 # user参数是生成的个数默认是10
         from app.fakes import fake_admin, fake_user, fake_pic, fake_tag, fake_comment, fake_collect # 调用管理员与用户生成函数
-        # db.drop_all()
-        # db.create_all()
+        db.drop_all()
+        db.create_all()
         click.echo('初始化权限和角色')
         Role.init_role()
         click.echo('生成管理员')

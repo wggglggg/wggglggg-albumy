@@ -18,6 +18,7 @@ class EditProfileAdminForm(EditProfileForm):
 
         self.user = user        # 默认EditProfileForm父类的 self.user 是  current_user, 这里改写成对方的user
 
+    # 校验的目的是在管理后台给某用户配置完权限或者简介等之后, 防止提交时会提示 姓名已被使用
     def validate_username(self, field):
         if field.data != self.user.username and User.query.filter_by(email=field.data).first():
             raise ValidationError('姓名已经被人使用')
